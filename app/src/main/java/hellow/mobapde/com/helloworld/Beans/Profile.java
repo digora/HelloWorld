@@ -1,4 +1,4 @@
-package hellow.mobapde.com.helloworld;
+package hellow.mobapde.com.helloworld.Beans;
 
 import java.util.ArrayList;
 

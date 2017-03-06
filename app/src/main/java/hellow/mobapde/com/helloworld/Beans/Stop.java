@@ -1,4 +1,4 @@
-package hellow.mobapde.com.helloworld;
+package hellow.mobapde.com.helloworld.Beans;
 
 /**
  * Created by Patrick on 3/3/2017.
