@@ -19,7 +19,7 @@ import java.util.jar.*;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int MY_PERMISSION_MAP_GRANTED = 1;
-    private boolean mapsGranted = false;
+    private boolean mapsGranted = true; // TODO fix
     Button btnStart;
 
     @Override
