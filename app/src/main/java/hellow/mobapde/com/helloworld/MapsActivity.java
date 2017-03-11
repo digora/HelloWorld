@@ -1,7 +1,10 @@
 package hellow.mobapde.com.helloworld;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,6 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private FloatingActionButton dashboardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        dashboardButton = (FloatingActionButton) findViewById(R.id.btn_dashboard);
+
+        dashboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getBaseContext(), DashboardActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 
     /**
