@@ -33,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(getBaseContext(), DashboardActivity.class);
+                intent.setClass(getBaseContext(), ProfileActivity.class);
 
                 startActivity(intent);
             }
