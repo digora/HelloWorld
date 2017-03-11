@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 
 public class Profile {
+    private int uid;
     private String name;
     private ArrayList<Adventure> completed_adventures;
     private ArrayList<Stamp> stamps;
@@ -20,6 +21,14 @@ public class Profile {
         this.completed_adventures = completed_adventures;
         this.stamps = stamps;
         this.gender = gender;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 
     public String getName() {
