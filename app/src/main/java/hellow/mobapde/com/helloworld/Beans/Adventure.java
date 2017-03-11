@@ -1,5 +1,6 @@
 package hellow.mobapde.com.helloworld.Beans;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,21 +10,35 @@ import java.util.ArrayList;
  * Created by Patrick on 3/3/2017.
  */
 
-public class Adventure implements Parcelable {
+public class Adventure {
     private String name;
     private String details;
     private String status;
+    private Bitmap picture;
     private ArrayList<Stop> stops;
 
-    public Adventure() {
 
-    }
-
-    public Adventure(String name, String details, String status, ArrayList<Stop> stops) {
+    /* Uncomment this out. */
+    /*public Adventure(String name, String details, String status, ArrayList<Stop> stops) {
         this.name = name;
         this.details = details;
         this.status = status;
         this.stops = stops;
+    }*/
+
+    /* For temporary data */
+    public Adventure(String name, String details, String status, Bitmap picture) {
+        this.name = name;
+        this.details = details;
+        this.status = status;
+    }
+
+    public Bitmap getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Bitmap picture) {
+        this.picture = picture;
     }
 
     public String getName() {
@@ -66,13 +81,5 @@ public class Adventure implements Parcelable {
         return stops.get(index);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 }

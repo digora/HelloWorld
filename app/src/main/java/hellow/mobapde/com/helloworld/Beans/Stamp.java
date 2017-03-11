@@ -1,5 +1,7 @@
 package hellow.mobapde.com.helloworld.Beans;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Patrick on 3/3/2017.
  */
@@ -7,13 +9,22 @@ package hellow.mobapde.com.helloworld.Beans;
 public class Stamp {
     private String name;
     private String description;
-    //picture
+    private Bitmap picture;
     private String date;
 
-    public Stamp(String name, String description, String date) {
+    public Stamp(String name, String description, String date, Bitmap picture) {
         this.name = name;
         this.description = description;
         this.date = date;
+        this.picture = picture;
+    }
+
+    public Bitmap getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Bitmap picture) {
+        this.picture = picture;
     }
 
     public String getName() {
