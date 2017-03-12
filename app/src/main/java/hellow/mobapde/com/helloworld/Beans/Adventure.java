@@ -31,6 +31,7 @@ public class Adventure {
         this.name = name;
         this.details = details;
         this.status = status;
+        this.picture = picture;
     }
 
     public Bitmap getPicture() {

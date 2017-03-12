@@ -94,7 +94,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/rv_stamps"></android.support.v7.widget.RecyclerView>
+                android:id="@+id/rv_stamps"/>
 
         </LinearLayout>
 
@@ -117,7 +117,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_adventures"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"/>
+
 
         </LinearLayout>
 
