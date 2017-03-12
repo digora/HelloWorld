@@ -1,22 +1,19 @@
 package hellow.mobapde.com.helloworld.Beans;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
 /**
  * Created by Patrick on 3/3/2017.
  */
 
-public class Adventure implements Parcelable {
+public class Adventure {
     private String name;
     private String details;
     private String status;
     private ArrayList<Stop> stops;
 
     public Adventure() {
-
+        stops = new ArrayList<Stop>();
     }
 
     public Adventure(String name, String details, String status, ArrayList<Stop> stops) {
@@ -66,13 +63,8 @@ public class Adventure implements Parcelable {
         return stops.get(index);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public int getNumberOfStops () {
+        return stops.size();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
 }

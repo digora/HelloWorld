@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -12,6 +13,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import hellow.mobapde.com.helloworld.Beans.Adventure;
+import hellow.mobapde.com.helloworld.Beans.Stop;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -53,9 +57,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        /*Adventure adventure = new Adventure(); // FOR TESTING
+
+        Stop stop1 = new Stop();
+        LatLng stop1Coord = new LatLng(-36, 157);
+        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stop 1"));
+
+        Stop stop2 = new Stop();
+        LatLng stop2Coord = new LatLng(-38, 157);
+        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Stop 2"));
+
+        Stop stop3 = new Stop();
+        LatLng stop3Coord = new LatLng(-40, 157);
+        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Stop 3 !!!"));
+
+        adventure.addStop(stop1);
+        adventure.addStop(stop2);
+        adventure.addStop(stop3);
+
+        addAdventureToMap(adventure, mMap);*/
+    }
+
+    private void addAdventureToMap (Adventure adventure, GoogleMap map) {
+        for (int i = 0; i < adventure.getNumberOfStops(); i++) {
+            Log.i("Stop added", i+"");
+
+            addStopToMap(adventure.getStop(i), map);
+        }
+    }
+
+    private void addStopToMap (Stop stop, GoogleMap map) {
+        map.addMarker(stop.getMarkerOptions());
     }
 }
