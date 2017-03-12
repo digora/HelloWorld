@@ -11,6 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -75,7 +76,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         adventure.addStop(stop2);
         adventure.addStop(stop3);
 
-        addAdventureToMap(adventure, mMap);*/
+        addAdventureToMap(adventure, mMap);
+
+        moveCameraToStop (stop1, mMap);*/
+
+    }
+
+    private void moveCameraToStop (Stop stop, GoogleMap map) {
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(stop.getLatLng())
+                .zoom(6) // TODO optimize to see all points (including your position)
+                .bearing(20) // TODO optimize to see all points (including your position)
+                .tilt(0)
+                .build();
+
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     private void addAdventureToMap (Adventure adventure, GoogleMap map) {
