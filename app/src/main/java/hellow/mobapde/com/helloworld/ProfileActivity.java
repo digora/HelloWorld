@@ -55,6 +55,22 @@ public class ProfileActivity extends AppCompatActivity {
                 "Completed a casual adventure in less than 1 hour.",
                 "01/01/17",
                 BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
+        stampList.add(new Stamp("Quick Adventurer",
+                "Completed a casual adventure in less than 1 hour.",
+                "01/01/17",
+                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
+        stampList.add(new Stamp("Quick Adventurer",
+                "Completed a casual adventure in less than 1 hour.",
+                "01/01/17",
+                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
+        stampList.add(new Stamp("Quick Adventurer",
+                "Completed a casual adventure in less than 1 hour.",
+                "01/01/17",
+                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
+        stampList.add(new Stamp("Quick Adventurer",
+                "Completed a casual adventure in less than 1 hour.",
+                "01/01/17",
+                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
 
         adventureList = new ArrayList<>();
         adventureList.add(new Adventure("South Adventure",
@@ -91,6 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
+        initStampList();
 
 
         rvAdventures = (RecyclerView) findViewById(R.id.rv_adventures);
@@ -103,6 +120,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void initStampList(){
+
+        Log.d(TAG, "Assigning adapter to stamp list");
+        stampAdapter = new StampAdapter(stampList);
+        rvStamps.setAdapter(stampAdapter);
 
     }
 
