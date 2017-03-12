@@ -82,5 +82,8 @@ public class Adventure {
         return stops.get(index);
     }
 
+    public int getNumberOfStops () {
+        return stops.size();
+    }
 
 }
