@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,6 +29,8 @@ public class ProfileActivity extends AppCompatActivity {
     ArrayList<Stamp> stampList;
     ArrayList<Adventure> adventureList;
 
+    TextView tvStampsSeeAll;
+    TextView tvAdventuresSeeAll;
     AdventureAdapter adventureAdapter;
     StampAdapter stampAdapter;
 
@@ -41,7 +47,54 @@ public class ProfileActivity extends AppCompatActivity {
 
         Log.d(TAG, "Creating content view");
 
-        /* DELETE Temporary Data */
+        tvStampsSeeAll = (TextView) findViewById(R.id.tv_stamps_see_all);
+        tvAdventuresSeeAll = (TextView) findViewById(R.id.tv_adventures_see_all);
+
+        initListeners();
+
+        initDummyAdventureData();
+        initDummyStampData();
+
+        Log.d(TAG, "Adventure List instantiated with size: " + adventureList.size());
+        Log.d(TAG, "Stamp List instantiated with size: " + stampList.size());
+
+        rvStamps = (RecyclerView) findViewById(R.id.rv_stamps);
+        rvStamps.setLayoutManager(new LinearLayoutManager(
+                getBaseContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+        ));
+        initStampList();
+
+
+        rvAdventures = (RecyclerView) findViewById(R.id.rv_adventures);
+        rvAdventures.setLayoutManager(new LinearLayoutManager(
+                getBaseContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+        ));
+        initAdventuresList();
+    }
+
+    public void initListeners(){
+        tvAdventuresSeeAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getBaseContext(), "Adventure See all clicked", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        tvStampsSeeAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getBaseContext(), "Stamps See all clicked", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /* DELETE Temporary Data */
+    public void initDummyStampData(){
+
         stampList = new ArrayList<>();
         stampList.add(new Stamp("Casual Adventurer",
                 "Completed a casual adventure.",
@@ -72,6 +125,10 @@ public class ProfileActivity extends AppCompatActivity {
                 "01/01/17",
                 BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
 
+
+    }
+
+    public void initDummyAdventureData(){
         adventureList = new ArrayList<>();
         adventureList.add(new Adventure("South Adventure",
                 "Venture the south.",
@@ -98,25 +155,6 @@ public class ProfileActivity extends AppCompatActivity {
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
 
-        Log.d(TAG, "Adventure List instantiated with size: " + adventureList.size());
-        Log.d(TAG, "Stamp List instantiated with size: " + stampList.size());
-
-        rvStamps = (RecyclerView) findViewById(R.id.rv_stamps);
-        rvStamps.setLayoutManager(new LinearLayoutManager(
-                getBaseContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false
-        ));
-        initStampList();
-
-
-        rvAdventures = (RecyclerView) findViewById(R.id.rv_adventures);
-        rvAdventures.setLayoutManager(new LinearLayoutManager(
-                getBaseContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false
-        ));
-        initAdventuresList();
     }
 
     public void initStampList(){
