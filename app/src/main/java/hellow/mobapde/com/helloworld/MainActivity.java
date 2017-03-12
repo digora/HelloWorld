@@ -19,7 +19,6 @@ import java.util.jar.*;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int MY_PERMISSION_MAP_GRANTED = 1;
-    private boolean mapsGranted = true; // TODO fix
     Button btnStart;
 
     @Override
@@ -36,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent mapIntent = new Intent();
                 mapIntent.setClass(getBaseContext(), MapsActivity.class);
 
-                if(mapsGranted){
+                if(ContextCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     startActivity(mapIntent);
                 }else{
                     Toast.makeText(MainActivity.this, "Map Permission Required", Toast.LENGTH_SHORT).show();
@@ -63,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 // sees the explanation, try again to request the permission.
                 Log.d(TAG, "Explaining to user rationale for permission");
 
-                //Allows user to maps activity
-                mapsGranted = true;
+
 
             } else {
 
@@ -79,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 // result of the request.
             }
         }
+
+        Log.d(TAG,"User has already granted permission");
     }
 
     @Override
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Log.d(TAG, "Permission granted. Running Maps Activity");
+                    Log.d(TAG, "Permission granted. Access to MapActivity True");
 
                 } else {
 
