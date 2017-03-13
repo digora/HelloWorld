@@ -89,7 +89,6 @@ public class ProfileActivity extends AppCompatActivity {
         ));
         initStampList();
 
-
         rvAdventures = (RecyclerView) findViewById(R.id.rv_adventures);
         rvAdventures.setLayoutManager(new LinearLayoutManager(
                 getBaseContext(),
