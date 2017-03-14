@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
@@ -91,4 +93,7 @@ public class Adventure {
         return stops.size();
     }
 
+    public LatLng getLatLngOfStop (int index) {
+        return stops.get(index).getLatLng();
+    }
 }
