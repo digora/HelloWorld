@@ -1,15 +1,24 @@
 package hellow.mobapde.com.helloworld;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import hellow.mobapde.com.helloworld.Adapters.ClosestAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
+import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
+import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 
 public class AdventureActivity extends AppCompatActivity {
@@ -23,6 +32,10 @@ public class AdventureActivity extends AppCompatActivity {
     ArrayList<Adventure> latestAdventureList;
     ArrayList<Adventure> topAdventureList;
     ArrayList<Adventure> closestAdventureList;
+
+    ClosestAdventureAdapter closestAdventureAdapter;
+    LatestAdventureAdapter latestAdventureAdapter;
+    TopAdventureAdapter topAdventureAdapter;
 
 
     @Override
@@ -64,6 +77,7 @@ public class AdventureActivity extends AppCompatActivity {
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
+        initClosestList();
 
 
     }
@@ -78,6 +92,41 @@ public class AdventureActivity extends AppCompatActivity {
     }
 
     public void initClosestList(){
+        closestAdventureAdapter = new ClosestAdventureAdapter(closestAdventureList);
+        closestAdventureAdapter.setOnAdventureClickListener(new ClosestAdventureAdapter.OnAdventureClickListener() {
+            @Override
+            public void onAdventureClick(View view, Adventure a) {
+                Intent adventurePageIntent = new Intent(getBaseContext(), AdventureDetailsActivity.class);
+                adventurePageIntent.putExtra("aName", a.getName());
+                adventurePageIntent.putExtra("aDetails", a.getDetails());
+
+                try{
+                    String filename = "adventureViewedTempPic.png";
+                    FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                    a.getPicture().compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+                    fos.close();
+                    a.getPicture().recycle();
+
+                    adventurePageIntent.putExtra("aPicture", filename);
+
+                    startActivity(adventurePageIntent);
+
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+
+
+
+            }
+        });
+
+        rvClosestList.setAdapter(closestAdventureAdapter);
+
+
 
     }
 
