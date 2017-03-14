@@ -121,16 +121,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         /*Adventure adventure = new Adventure(); // FOR TESTING
 
         Stop stop1 = new Stop();
-        LatLng stop1Coord = new LatLng(-36, 157);
-        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stop 1"));
+        LatLng stop1Coord = new LatLng(14.582656431032717, 121.06181234121323);
+        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stock Exchange"));
 
         Stop stop2 = new Stop();
-        LatLng stop2Coord = new LatLng(-38, 157);
-        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Stop 2"));
+        LatLng stop2Coord = new LatLng(14.584379712874053, 121.05797845870256);
+        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Adspace"));
 
         Stop stop3 = new Stop();
-        LatLng stop3Coord = new LatLng(-40, 157);
-        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Stop 3 !!!"));
+        LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
+        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
 
         adventure.addStop(stop1);
         adventure.addStop(stop2);
@@ -138,9 +138,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         addAdventureToMap(adventure, mMap);
 
-        moveCameraToStop (stop1, mMap);
+        moveCameraToStop (stop1, mMap);*/
 
-        LatLng origin = new LatLng(14.582656431032717, 121.06181234121323);
+        /*LatLng origin = new LatLng(14.582656431032717, 121.06181234121323);
         LatLng dest = new LatLng(14.584379712874053, 121.05797845870256);
 
         // Getting URL to the Google Directions API
@@ -204,6 +204,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             addStopToMap(adventure.getStop(i), map);
         }
+
+        // START OF ROUTING POINT TO POINT
+        int i = 0;
+        while (i < adventure.getNumberOfStops() - 1) {
+            // Getting URL to the Google Directions API
+            String url = getUrl(adventure.getLatLngOfStop(i++), adventure.getLatLngOfStop(i));
+            FetchUrl fetchUrl = new FetchUrl();
+
+            // Start downloading json data from Google Directions API
+            fetchUrl.execute(url);
+
+            Log.i("Current stop count", i+"");
+        }
+        // END OF ROUTING POINT TO POINT
     }
 
     private void addStopToMap(Stop stop, GoogleMap map) {
