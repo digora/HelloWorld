@@ -36,6 +36,40 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
+                    android:text="Closest Adventures"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:id="@+id/tv_more_closest"
+                    android:text="MORE"
+                    android:textColor="#0000FF"/>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rv_closest_list"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
                     android:text="Latest Adventures"/>
 
                 <TextView
@@ -44,10 +78,15 @@
                     android:textSize="20sp"
                     android:text="MORE"
                     android:layout_gravity="right"
+                    android:id="@+id/tv_more_latest"
                     android:textColor="#0000FF"/>
 
             </LinearLayout>
 
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rv_latest_list"/>
         </LinearLayout>
 
         <LinearLayout
@@ -72,38 +111,16 @@
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:text="MORE"
-                    android:layout_gravity="right"
-                    android:textColor="#0000FF"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="Editors Choice"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="MORE"
+                    android:id="@+id/tv_more_top"
                     android:layout_gravity="end"
                     android:textColor="#0000FF"/>
 
             </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rv_top_list"/>
         </LinearLayout>
 
 
