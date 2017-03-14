@@ -52,7 +52,7 @@ public class AdventureDetailsActivity extends AppCompatActivity {
         });
 
         tvAdventureViewedTitle = (TextView) findViewById(R.id.tv_adventure_viewed_title);
-        tvAdventureViewedTitle.setText(collectIntent.getStringExtra("aTitle"));
+        tvAdventureViewedTitle.setText(collectIntent.getStringExtra("aName"));
 
         tvAdventureViewedDetails = (TextView) findViewById(R.id.tv_adventure_viewed_details);
         tvAdventureViewedDetails.setText(collectIntent.getStringExtra("aDetails"));
