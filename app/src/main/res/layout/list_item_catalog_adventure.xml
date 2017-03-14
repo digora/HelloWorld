@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="#d4d4d4"
+        android:id="@+id/ll_adventure_list_item"
         android:padding="12dp">
 
         <ImageView

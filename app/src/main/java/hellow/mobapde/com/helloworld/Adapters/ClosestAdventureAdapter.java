@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,8 +39,10 @@ public class ClosestAdventureAdapter extends RecyclerView.Adapter<ClosestAdventu
         final Adventure adventure = closestAdventureList.get(position);
 
         holder.tvAdventureCatalogTitle.setText(adventure.getName());
-        holder.tvAdventureCatalogTitle.setTag(adventure);
-        holder.tvAdventureCatalogTitle.setOnClickListener(new View.OnClickListener() {
+        holder.ivAdventureCatalogImage.setImageBitmap(adventure.getPicture());
+
+        holder.llAdventureListItem.setTag(adventure);
+        holder.llAdventureListItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAdventureClickListener.onAdventureClick(v, (Adventure) v.getTag());
@@ -61,6 +64,7 @@ public class ClosestAdventureAdapter extends RecyclerView.Adapter<ClosestAdventu
 
         TextView tvAdventureCatalogTitle;
         ImageView ivAdventureCatalogImage;
+        LinearLayout llAdventureListItem;
 
         public ClosestAdventureHolder(View itemView) {
             super(itemView);
@@ -68,6 +72,8 @@ public class ClosestAdventureAdapter extends RecyclerView.Adapter<ClosestAdventu
             tvAdventureCatalogTitle = (TextView) itemView.findViewById(R.id.tv_adventure_catalog_title);
 
             ivAdventureCatalogImage = (ImageView) itemView.findViewById(R.id.iv_adventure_catalog_image);
+
+            llAdventureListItem = (LinearLayout) itemView.findViewById(R.id.ll_adventure_list_item);
         }
     }
 
