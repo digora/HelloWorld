@@ -53,16 +53,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationListener {
 
     private GoogleMap mMap;
-    FloatingActionButton dashboardButton;
-    Button btnViewAdventures;
+    private FloatingActionButton dashboardButton;
+    private Button btnViewAdventures;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
+
+    private Adventure currentAdventure;
+
+    private TextView tvCurrentAdventureName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -120,6 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         /*Adventure adventure = new Adventure(); // FOR TESTING
 
+        adventure.setName("Adspace Journey");
+
         Stop stop1 = new Stop();
         LatLng stop1Coord = new LatLng(14.582656431032717, 121.06181234121323);
         stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stock Exchange"));
@@ -136,23 +145,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         adventure.addStop(stop2);
         adventure.addStop(stop3);
 
+        setCurrentAdventure(adventure);
         addAdventureToMap(adventure, mMap);
 
         moveCameraToStop (stop1, mMap);*/
-
-        /*LatLng origin = new LatLng(14.582656431032717, 121.06181234121323);
-        LatLng dest = new LatLng(14.584379712874053, 121.05797845870256);
-
-        // Getting URL to the Google Directions API
-        String url = getUrl(origin, dest);
-        FetchUrl fetchUrl = new FetchUrl();
-
-        // Start downloading json data from Google Directions API
-        fetchUrl.execute(url);
-
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));*/
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -243,6 +239,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+    }
+
+    public void setCurrentAdventure(Adventure adventure) {
+        this.currentAdventure = adventure;
+
+        tvCurrentAdventureName.setText(adventure.getName());
+    }
+
+    public Adventure getCurrentAdventure() {
+        return this.currentAdventure;
     }
 
     @Override
