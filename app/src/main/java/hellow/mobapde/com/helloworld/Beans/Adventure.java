@@ -27,6 +27,11 @@ public class Adventure {
     }*/
 
     /* For temporary data */
+
+    public Adventure () {
+        stops = new ArrayList<Stop>();
+    }
+
     public Adventure(String name, String details, String status, Bitmap picture) {
         this.name = name;
         this.details = details;
