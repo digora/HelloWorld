@@ -46,6 +46,7 @@ import java.util.List;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
+import hellow.mobapde.com.helloworld.GoogleMapParser.PathWrapperSettings;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -125,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*Adventure adventure = new Adventure(); // FOR TESTING
+        Adventure adventure = new Adventure(); // FOR TESTING
 
         adventure.setName("Adspace Journey");
 
@@ -146,9 +147,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         adventure.addStop(stop3);
 
         setCurrentAdventure(adventure);
-        addAdventureToMap(adventure, mMap);
+        addAdventureToMap(adventure, mMap, new PathWrapperSettings(Color.RED, 6));
 
-        moveCameraToStop (stop1, mMap);*/
+        moveCameraToStop (stop1, mMap);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -194,7 +195,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private void addAdventureToMap(Adventure adventure, GoogleMap map) {
+    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapperSettings pathWrapperSettings) {
+
         for (int i = 0; i < adventure.getNumberOfStops(); i++) {
             Log.i("Stop added", i + "");
 
@@ -205,11 +207,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int i = 0;
         while (i < adventure.getNumberOfStops() - 1) {
             // Getting URL to the Google Directions API
+
+            PathWrapperSettings pathWrapperSettingsForURL =
+                    new PathWrapperSettings(pathWrapperSettings.pathColor, pathWrapperSettings.lineWidth);
+
             String url = getUrl(adventure.getLatLngOfStop(i++), adventure.getLatLngOfStop(i));
+
+            Log.i("Generated URL", url);
+
+            pathWrapperSettingsForURL.url = url;
+
+            Log.i("SET URL", pathWrapperSettingsForURL.url);
+
             FetchUrl fetchUrl = new FetchUrl();
 
             // Start downloading json data from Google Directions API
-            fetchUrl.execute(url);
+            fetchUrl.execute(pathWrapperSettingsForURL);
 
             Log.i("Current stop count", i+"");
         }
@@ -298,29 +311,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Fetches data from url passed
-    private class FetchUrl extends AsyncTask<String, Void, String> {
+    private class FetchUrl extends AsyncTask<PathWrapperSettings, Void, PathWrapperSettings> {
 
         @Override
-        protected String doInBackground(String... url) {
+        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
 
             // For storing data from web service
             String data = "";
 
             try {
                 // Fetching the data from web service
-                data = downloadUrl(url[0]);
+                data = downloadUrl(pathWrapperSettings[0].url);
                 Log.d("Background Task data", data.toString());
+
+                pathWrapperSettings[0].url = data;
             } catch (Exception e) {
                 Log.d("Background Task", e.toString());
             }
 
             Log.i("found path url", data);
 
-            return data;
+            return pathWrapperSettings[0];
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(PathWrapperSettings result) {
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
@@ -369,18 +384,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return data;
     }
 
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+    private class ParserTask extends AsyncTask<PathWrapperSettings, Integer, PathWrapperSettings> {
 
         // Parsing the data in non-ui thread
         @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
 
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
 
             try {
-                jObject = new JSONObject(jsonData[0]);
-                Log.d("ParserTask",jsonData[0].toString());
+                jObject = new JSONObject(pathWrapperSettings[0].url);
+                Log.d("ParserTask",pathWrapperSettings[0].url.toString());
                 DataParser parser = new DataParser();
                 Log.d("ParserTask", parser.toString());
 
@@ -389,26 +404,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("ParserTask","Executing routes");
                 Log.d("ParserTask",routes.toString());
 
+                pathWrapperSettings[0].routes = routes;
+
             } catch (Exception e) {
                 Log.d("ParserTask",e.toString());
                 e.printStackTrace();
             }
-            return routes;
+            return pathWrapperSettings[0];
         }
 
         // Executes in UI thread, after the parsing process
         @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+        protected void onPostExecute(PathWrapperSettings result) {
             ArrayList<LatLng> points;
             PolylineOptions lineOptions = null;
 
             // Traversing through all the routes
-            for (int i = 0; i < result.size(); i++) {
+            for (int i = 0; i < result.routes.size(); i++) {
                 points = new ArrayList<>();
                 lineOptions = new PolylineOptions();
 
                 // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
+                List<HashMap<String, String>> path = result.routes.get(i);
 
                 // Fetching all the points in i-th route
                 for (int j = 0; j < path.size(); j++) {
@@ -423,8 +440,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.RED);
+                lineOptions.width(result.lineWidth);
+                lineOptions.color(result.pathColor);
 
                 Log.d("onPostExecute","onPostExecute lineoptions decoded");
 
