@@ -2,7 +2,9 @@ package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,9 +29,24 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
+import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
+import hellow.mobapde.com.helloworld.GoogleMapParser.PathWrapperSettings;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -37,16 +54,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationListener {
 
     private GoogleMap mMap;
-    FloatingActionButton dashboardButton;
-    Button btnViewAdventures;
+    private FloatingActionButton dashboardButton;
+    private Button btnViewAdventures;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
+
+    private Adventure currentAdventure;
+
+    private TextView tvCurrentAdventureName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -102,27 +126,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*Adventure adventure = new Adventure(); // FOR TESTING
+        Adventure adventure = new Adventure(); // FOR TESTING
+
+        adventure.setName("Adspace Journey");
 
         Stop stop1 = new Stop();
-        LatLng stop1Coord = new LatLng(-36, 157);
-        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stop 1"));
+        LatLng stop1Coord = new LatLng(14.582656431032717, 121.06181234121323);
+        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stock Exchange"));
 
         Stop stop2 = new Stop();
-        LatLng stop2Coord = new LatLng(-38, 157);
-        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Stop 2"));
+        LatLng stop2Coord = new LatLng(14.584379712874053, 121.05797845870256);
+        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Adspace"));
 
         Stop stop3 = new Stop();
-        LatLng stop3Coord = new LatLng(-40, 157);
-        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Stop 3 !!!"));
+        LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
+        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
 
         adventure.addStop(stop1);
         adventure.addStop(stop2);
         adventure.addStop(stop3);
 
-        addAdventureToMap(adventure, mMap);
+        setCurrentAdventure(adventure);
+        addAdventureToMap(adventure, mMap, new PathWrapperSettings(Color.RED, 6));
 
-        moveCameraToStop (stop1, mMap);*/
+        moveCameraToStop (stop1, mMap);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -136,6 +163,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Log.i("Clicked on", latLng.toString());
+            }
+        });
     }
 
     private void moveCameraToStop(Stop stop, GoogleMap map) {
@@ -162,12 +195,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private void addAdventureToMap(Adventure adventure, GoogleMap map) {
+    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapperSettings pathWrapperSettings) {
+
         for (int i = 0; i < adventure.getNumberOfStops(); i++) {
             Log.i("Stop added", i + "");
 
             addStopToMap(adventure.getStop(i), map);
         }
+
+        // START OF ROUTING POINT TO POINT
+        int i = 0;
+        while (i < adventure.getNumberOfStops() - 1) {
+            // Getting URL to the Google Directions API
+
+            PathWrapperSettings pathWrapperSettingsForURL =
+                    new PathWrapperSettings(pathWrapperSettings.pathColor, pathWrapperSettings.lineWidth);
+
+            String url = getUrl(adventure.getLatLngOfStop(i++), adventure.getLatLngOfStop(i));
+
+            Log.i("Generated URL", url);
+
+            pathWrapperSettingsForURL.url = url;
+
+            Log.i("SET URL", pathWrapperSettingsForURL.url);
+
+            FetchUrl fetchUrl = new FetchUrl();
+
+            // Start downloading json data from Google Directions API
+            fetchUrl.execute(pathWrapperSettingsForURL);
+
+            Log.i("Current stop count", i+"");
+        }
+        // END OF ROUTING POINT TO POINT
     }
 
     private void addStopToMap(Stop stop, GoogleMap map) {
@@ -195,6 +254,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
 
+    public void setCurrentAdventure(Adventure adventure) {
+        this.currentAdventure = adventure;
+
+        tvCurrentAdventureName.setText(adventure.getName());
+    }
+
+    public Adventure getCurrentAdventure() {
+        return this.currentAdventure;
+    }
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -216,7 +285,175 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    /*protected synchronized void buildGoogleApiClient() {
-        mGoogle
-    }*/
+    private String getUrl(LatLng origin, LatLng dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+
+
+        return url;
+    }
+
+    // Fetches data from url passed
+    private class FetchUrl extends AsyncTask<PathWrapperSettings, Void, PathWrapperSettings> {
+
+        @Override
+        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
+
+            // For storing data from web service
+            String data = "";
+
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(pathWrapperSettings[0].url);
+                Log.d("Background Task data", data.toString());
+
+                pathWrapperSettings[0].url = data;
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+
+            Log.i("found path url", data);
+
+            return pathWrapperSettings[0];
+        }
+
+        @Override
+        protected void onPostExecute(PathWrapperSettings result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            // Invokes the thread for parsing the JSON data
+            parserTask.execute(result);
+
+        }
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Connecting to url
+            urlConnection.connect();
+
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+            Log.d("downloadUrl", data.toString());
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class ParserTask extends AsyncTask<PathWrapperSettings, Integer, PathWrapperSettings> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(pathWrapperSettings[0].url);
+                Log.d("ParserTask",pathWrapperSettings[0].url.toString());
+                DataParser parser = new DataParser();
+                Log.d("ParserTask", parser.toString());
+
+                // Starts parsing data
+                routes = parser.parse(jObject);
+                Log.d("ParserTask","Executing routes");
+                Log.d("ParserTask",routes.toString());
+
+                pathWrapperSettings[0].routes = routes;
+
+            } catch (Exception e) {
+                Log.d("ParserTask",e.toString());
+                e.printStackTrace();
+            }
+            return pathWrapperSettings[0];
+        }
+
+        // Executes in UI thread, after the parsing process
+        @Override
+        protected void onPostExecute(PathWrapperSettings result) {
+            ArrayList<LatLng> points;
+            PolylineOptions lineOptions = null;
+
+            // Traversing through all the routes
+            for (int i = 0; i < result.routes.size(); i++) {
+                points = new ArrayList<>();
+                lineOptions = new PolylineOptions();
+
+                // Fetching i-th route
+                List<HashMap<String, String>> path = result.routes.get(i);
+
+                // Fetching all the points in i-th route
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                // Adding all the points in the route to LineOptions
+                lineOptions.addAll(points);
+                lineOptions.width(result.lineWidth);
+                lineOptions.color(result.pathColor);
+
+                Log.d("onPostExecute","onPostExecute lineoptions decoded");
+
+            }
+
+            // Drawing polyline in the Google Map for the i-th route
+            if(lineOptions != null) {
+                mMap.addPolyline(lineOptions);
+            }
+            else {
+                Log.d("onPostExecute","without Polylines drawn");
+            }
+        }
+    }
 }

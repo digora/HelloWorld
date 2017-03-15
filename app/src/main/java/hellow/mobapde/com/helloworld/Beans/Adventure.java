@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
@@ -27,6 +29,11 @@ public class Adventure {
     }*/
 
     /* For temporary data */
+
+    public Adventure () {
+        stops = new ArrayList<Stop>();
+    }
+
     public Adventure(String name, String details, String status, Bitmap picture) {
         this.name = name;
         this.details = details;
@@ -86,4 +93,7 @@ public class Adventure {
         return stops.size();
     }
 
+    public LatLng getLatLngOfStop (int index) {
+        return stops.get(index).getLatLng();
+    }
 }
