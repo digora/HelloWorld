@@ -36,8 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Go!"
+            android:textColor="#FFF"
             android:layout_margin="6dp"
-            android:background="#00FF00"
+            android:background="@color/colorAccent"
             android:layout_weight="1"
             android:id="@+id/btn_go"/>
 
@@ -45,10 +46,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btn_cancel"
+            android:textColor="#FFF"
             android:layout_weight="1"
             android:layout_margin="6dp"
             android:background="#FF0000"
             android:text="Cancel"/>
+
+
+
+
 
 
 

@@ -100,7 +100,9 @@ public class AdventureActivity extends AppCompatActivity {
                 adventurePageIntent.putExtra("aName", a.getName());
                 adventurePageIntent.putExtra("aDetails", a.getDetails());
 
-                try{
+                startActivity(adventurePageIntent);
+
+                /*try{
                     String filename = "adventureViewedTempPic.png";
                     FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
                     a.getPicture().compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -115,7 +117,7 @@ public class AdventureActivity extends AppCompatActivity {
 
                 } catch (Exception e){
                     e.printStackTrace();
-                }
+                }*/
 
 
 

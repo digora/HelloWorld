@@ -24,7 +24,6 @@ public class AdventureDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adventure_details);
 
-
         createContentView();
     }
 
@@ -36,10 +35,9 @@ public class AdventureDetailsActivity extends AppCompatActivity {
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mapIntent = new Intent(getBaseContext(), MapsActivity.class);
-
-
-                startActivity(mapIntent);
+                /*Intent mapIntent = new Intent(getBaseContext(), MapsActivity.class);
+                startActivity(mapIntent);*/
+                finish();
             }
         });
 
@@ -61,8 +59,9 @@ public class AdventureDetailsActivity extends AppCompatActivity {
         tvAdventureViewedDetails.setText(collectIntent.getStringExtra("aDetails"));
 
         ivAdventureViewedPicture = (ImageView) findViewById(R.id.iv_adventure_viewed_picture);
+        ivAdventureViewedPicture.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon));
 
-        Bitmap bmp = null;
+        /*Bitmap bmp = null;
         String filename = collectIntent.getStringExtra("aPicture");
         try{
             FileInputStream fis = openFileInput(filename);
@@ -72,14 +71,7 @@ public class AdventureDetailsActivity extends AppCompatActivity {
             ivAdventureViewedPicture.setImageBitmap(bmp);
         }catch(Exception e){
             e.printStackTrace();
-        }
-
-
-
-
-
-
-
+        }*/
 
     }
 }
