@@ -64,6 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private TextView tvCurrentAdventureName;
 
+    private Location currentLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -283,6 +285,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
+
+        currentLocation = location;
     }
 
     private String getUrl(LatLng origin, LatLng dest) {
