@@ -117,4 +117,16 @@ public class Adventure {
     public LatLng getLatLngOfStop (int index) {
         return stops.get(index).getLatLng();
     }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public void toggleVisited() {
+        this.visited = !(this.visited);
+    }
 }
