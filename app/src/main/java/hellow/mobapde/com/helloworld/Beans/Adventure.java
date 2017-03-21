@@ -18,7 +18,6 @@ public class Adventure {
     private String status;
     private Bitmap picture;
     private ArrayList<Stop> stops;
-    private boolean visited;
 
 
     /* Uncomment this out. */
@@ -33,7 +32,6 @@ public class Adventure {
 
     public Adventure () {
         stops = new ArrayList<Stop>();
-        visited = false;
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
@@ -42,24 +40,6 @@ public class Adventure {
         this.status = status;
         this.picture = picture;
         stops = new ArrayList<Stop>();
-    }
-
-    public Adventure(String name, String details, String status, Bitmap picture, boolean visited) {
-        this.name = name;
-        this.details = details;
-        this.status = status;
-        this.picture = picture;
-        this.stops = new ArrayList<Stop>();
-        this.visited = visited;
-    }
-
-    public Adventure(String name, String details, String status, Bitmap picture, ArrayList<Stop> stops, boolean visited) {
-        this.name = name;
-        this.details = details;
-        this.status = status;
-        this.picture = picture;
-        this.stops = stops;
-        this.visited = visited;
     }
 
     public Bitmap getPicture() {
@@ -118,15 +98,4 @@ public class Adventure {
         return stops.get(index).getLatLng();
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
-    public void toggleVisited() {
-        this.visited = !(this.visited);
-    }
 }
