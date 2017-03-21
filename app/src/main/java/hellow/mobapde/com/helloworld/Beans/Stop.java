@@ -16,10 +16,20 @@ public class Stop {
     private MarkerOptions markerOptions;
     private Picture picture;
     private CircleOptions circleOptions;
+    private boolean visited;
 
 
     public Stop() {
+        visited = false;
+    }
 
+    public Stop(int stopId, String description, MarkerOptions markerOptions, Picture picture, CircleOptions circleOptions, boolean visited) {
+        this.stopId = stopId;
+        this.description = description;
+        this.markerOptions = markerOptions;
+        this.picture = picture;
+        this.circleOptions = circleOptions;
+        this.visited = visited;
     }
 
     public int getStopId() {
@@ -87,4 +97,15 @@ public class Stop {
         circleOptions.radius(radius);
     }
 
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public void toggleVisited () {
+        visited = !visited;
+    }
 }
