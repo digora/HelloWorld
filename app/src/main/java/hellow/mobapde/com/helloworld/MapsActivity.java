@@ -130,6 +130,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         Adventure adventure = new Adventure(); // FOR TESTING
 
         adventure.setName("A Trip to the Rice Fields");
