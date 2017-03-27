@@ -17,8 +17,9 @@ public class Adventure {
 
     private String name;
     private String details;
-    private String status;
 
+    @JsonIgnore
+    private String status;
     @JsonIgnore
     private String key;
     @JsonIgnore
@@ -38,13 +39,11 @@ public class Adventure {
     /* For temporary data */
 
     public Adventure() {
-        this.status = "Not Started";
     }
 
     public Adventure(String name, String details) {
         this.name = name;
         this.details = details;
-        this.status = "Not Started";
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {

@@ -108,4 +108,17 @@ public class FirebaseHelper {
         s.setKey(key);
         stopReference.child(key).setValue(s);
     }
+    public Adventure getAdventure(String key){
+        Adventure a = new Adventure();
+        int i = 0;
+        while(i != -1 && i < adventures.size()){
+            a = adventures.get(i);
+            if(a.getKey().equals(key))
+                i = -1;
+            else
+                i++;
+        }
+
+        return a;
+    }
 }
