@@ -132,26 +132,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Adventure adventure = new Adventure(); // FOR TESTING
 
-        adventure.setName("Adspace Journey");
+        adventure.setName("A Trip to the Rice Fields");
 
         Stop stop1 = new Stop();
-        LatLng stop1Coord = new LatLng(14.582656431032717, 121.06181234121323);
-        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("Stock Exchange"));
+        LatLng stop1Coord = new LatLng(14.4671549, 121.0084754);
+        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("House"));
+        stop1.setCircleOptions(new CircleOptions().center(stop1Coord).fillColor(0x66888888).strokeColor(Color.DKGRAY).radius(20));
+
+        targetStop = stop1;
 
         Stop stop2 = new Stop();
-        LatLng stop2Coord = new LatLng(14.584379712874053, 121.05797845870256);
-        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Adspace"));
+        LatLng stop2Coord = new LatLng(14.4662063, 121.0098848);
+        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Japanese Resto"));
+        stop2.setCircleOptions(new CircleOptions().center(stop2Coord).fillColor(0x66888888).strokeColor(Color.DKGRAY).radius(20));
 
-        Stop stop3 = new Stop();
+        /*Stop stop3 = new Stop();
         LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
-        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
+        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));*/
 
         adventure.addStop("testStop1", stop1);
         adventure.addStop("testStop2", stop2);
-        adventure.addStop("testStop3", stop3);
 
         setCurrentAdventure(adventure);
-        addAdventureToMap(adventure, mMap, new PathWrapperSettings(Color.RED, 6));
+        addAdventureToMap(adventure, mMap, new PathWrapperSettings(0x66FF0000, 12));
 
         moveCameraToStop (stop1, mMap);
 
@@ -239,6 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addStopToMap(Stop stop, GoogleMap map) {
         map.addMarker(stop.getMarkerOptions());
+        map.addCircle(stop.getCircleOptions());
     }
 
     @Override
@@ -294,9 +298,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         currentLocation = location;
 
-        /*if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
+        if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
             Log.i("STATUS UPDATE", "you are at the first stop");
-        }*/
+        }
     }
 
     private boolean locationIsInStop (Location location, Stop stop) {
