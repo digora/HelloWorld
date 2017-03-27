@@ -28,7 +28,6 @@ public class Stop {
     }
 
     public Stop(int stopId, String description, MarkerOptions markerOptions, Picture picture, CircleOptions circleOptions, boolean visited) {
-        this.stopId = stopId;
         this.description = description;
         this.markerOptions = markerOptions;
         this.picture = picture;

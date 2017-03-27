@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import hellow.mobapde.com.helloworld.Converter.MapToArrayListConverter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
@@ -61,6 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest locationRequest;
 
     private Adventure currentAdventure;
+    private Stop targetStop;
 
     private TextView tvCurrentAdventureName;
 
@@ -144,9 +146,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
         stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
 
-        adventure.addStop(stop1);
-        adventure.addStop(stop2);
-        adventure.addStop(stop3);
+        adventure.addStop("testStop1", stop1);
+        adventure.addStop("testStop2", stop2);
+        adventure.addStop("testStop3", stop3);
 
         setCurrentAdventure(adventure);
         addAdventureToMap(adventure, mMap, new PathWrapperSettings(Color.RED, 6));
@@ -199,21 +201,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapperSettings pathWrapperSettings) {
 
-        for (int i = 0; i < adventure.getNumberOfStops(); i++) {
-            Log.i("Stop added", i + "");
+        ArrayList<Stop> stopsOfAdventure;
 
-            addStopToMap(adventure.getStop(i), map);
+        stopsOfAdventure = MapToArrayListConverter.convertMapToStopArray(adventure.getStops());
+
+        for (int i = 0; i < stopsOfAdventure.size(); i++) {
+            addStopToMap(stopsOfAdventure.get(i), map);
+
+            Log.i("STOP ADDED", stopsOfAdventure.get(i).getMarkerOptions().getTitle());
         }
 
         // START OF ROUTING POINT TO POINT
         int i = 0;
-        while (i < adventure.getNumberOfStops() - 1) {
+        while (i < stopsOfAdventure.size() - 1) {
             // Getting URL to the Google Directions API
 
             PathWrapperSettings pathWrapperSettingsForURL =
                     new PathWrapperSettings(pathWrapperSettings.pathColor, pathWrapperSettings.lineWidth);
 
-            String url = getUrl(adventure.getLatLngOfStop(i++), adventure.getLatLngOfStop(i));
+            String url = getUrl(stopsOfAdventure.get(i++).getLatLng(), stopsOfAdventure.get(i).getLatLng());
 
             Log.i("Generated URL", url);
 
@@ -287,6 +293,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         currentLocation = location;
+
+        /*if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
+            Log.i("STATUS UPDATE", "you are at the first stop");
+        }*/
+    }
+
+    private boolean locationIsInStop (Location location, Stop stop) {
+        CircleOptions circleOptionsOfStop = stop.getCircleOptions();
+
+        float[] distance = new float[2];
+
+        Location.distanceBetween(location.getLatitude(),
+                location.getLongitude(), circleOptionsOfStop.getCenter().latitude,
+                circleOptionsOfStop.getCenter().longitude, distance);
+
+        return distance[0] < circleOptionsOfStop.getRadius();
     }
 
     private String getUrl(LatLng origin, LatLng dest) {
