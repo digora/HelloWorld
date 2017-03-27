@@ -4,18 +4,27 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Patrick on 3/3/2017.
  */
 
 public class Adventure {
+
     private String name;
     private String details;
     private String status;
+
+    @JsonIgnore
+    private String key;
+    @JsonIgnore
     private Bitmap picture;
-    private ArrayList<Stop> stops;
+    @JsonIgnore
+    private Map<String, Stop> stops;
 
 
     /* Uncomment this out. */
@@ -27,11 +36,38 @@ public class Adventure {
     }*/
 
     /* For temporary data */
+
+    public Adventure() {
+        this.status = "Not Started";
+    }
+
+    public Adventure(String name, String details) {
+        this.name = name;
+        this.details = details;
+        this.status = "Not Started";
+    }
+
     public Adventure(String name, String details, String status, Bitmap picture) {
         this.name = name;
         this.details = details;
         this.status = status;
         this.picture = picture;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Map<String, Stop> getStops() {
+        return stops;
+    }
+
+    public void setStops(Map<String, Stop> stops) {
+        this.stops = stops;
     }
 
     public Bitmap getPicture() {
@@ -64,18 +100,6 @@ public class Adventure {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public ArrayList<Stop> getStops() {
-        return stops;
-    }
-
-    public void setStops(ArrayList<Stop> stops) {
-        this.stops = stops;
-    }
-
-    public void addStop (Stop stop) {
-        stops.add(stop);
     }
 
     public Stop getStop (int index) {

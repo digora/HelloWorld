@@ -2,6 +2,7 @@ package hellow.mobapde.com.helloworld.Beans;
 
 import android.graphics.Picture;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -11,7 +12,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 
 public class Stop {
-    private int stopId;
+    @JsonIgnore
+    private String key;
+    private String latitude;
+    private String longitude;
     private String description;
     private MarkerOptions markerOptions;
     private Picture picture;
@@ -22,12 +26,26 @@ public class Stop {
 
     }
 
-    public int getStopId() {
-        return stopId;
+    public Stop(String latitude, String longitude, String description) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.description = description;
     }
 
-    public void setStopId(int stopId) {
-        this.stopId = stopId;
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public MarkerOptions getMarkerOptions() {
