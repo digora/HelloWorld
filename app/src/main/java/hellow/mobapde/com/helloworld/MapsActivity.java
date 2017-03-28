@@ -26,8 +26,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -41,13 +43,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import hellow.mobapde.com.helloworld.Converter.MapToArrayListConverter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
 import hellow.mobapde.com.helloworld.GoogleMapParser.PathWrapperSettings;
+import hellow.mobapde.com.helloworld.GoogleMapParser.StopWrapper;
+import hellow.mobapde.com.helloworld.GoogleMapParser.StopWrapperList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -64,14 +70,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Adventure currentAdventure;
     private Stop targetStop;
 
+    private StopWrapperList stopWrappers;
+
     private TextView tvCurrentAdventureName;
 
     private Location currentLocation;
+
+    private FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        firebaseHelper = new FirebaseHelper();
+
+        stopWrappers = new StopWrapperList();
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -150,17 +164,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Japanese Resto"));
         stop2.setCircleOptions(new CircleOptions().center(stop2Coord).fillColor(0x66888888).strokeColor(Color.DKGRAY).radius(20));
 
-        /*Stop stop3 = new Stop();
+        Stop stop3 = new Stop();
         LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
-        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));*/
+        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
 
         adventure.addStop("testStop1", stop1);
         adventure.addStop("testStop2", stop2);
 
+        /*Adventure adventure = firebaseHelper.getAdventure("-Kg7iwO2x-7kwHkgmEbQ"); // sample
+
+        while (!firebaseHelper.isInstantiated())
+            adventure = firebaseHelper.getAdventure("-Kg7iwO2x-7kwHkgmEbQ"); // sample
+
+        Log.i("Retrieved adventure", adventure.getName());*/
+
+        //Log.i("Retrieved adventure", adventure.getKey());
+        //Log.i("Retrieved stops in ad", adventure.getNumberOfStops() + "");
+
         setCurrentAdventure(adventure);
         addAdventureToMap(adventure, mMap, new PathWrapperSettings(0x66FF0000, 12));
 
-        moveCameraToStop (stop1, mMap);
+        moveCameraToStop (targetStop, mMap);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -213,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopsOfAdventure = MapToArrayListConverter.convertMapToStopArray(adventure.getStops());
 
         for (int i = 0; i < stopsOfAdventure.size(); i++) {
-            addStopToMap(stopsOfAdventure.get(i), map);
+            stopWrappers.add(addStopToMap(stopsOfAdventure.get(i), map));
 
             Log.i("STOP ADDED", stopsOfAdventure.get(i).getMarkerOptions().getTitle());
         }
@@ -244,9 +268,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // END OF ROUTING POINT TO POINT
     }
 
-    private void addStopToMap(Stop stop, GoogleMap map) {
-        map.addMarker(stop.getMarkerOptions());
-        map.addCircle(stop.getCircleOptions());
+    private StopWrapper addStopToMap(Stop stop, GoogleMap map) {
+        Marker marker = map.addMarker(stop.getMarkerOptions());
+        Circle circle = map.addCircle(stop.getCircleOptions());
+
+        return new StopWrapper(stop, marker, circle);
     }
 
     @Override
@@ -302,10 +328,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         currentLocation = location;
 
-        if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
-            Log.i("STATUS UPDATE", "you are at the first stop");
+        if (targetStop != null) {
+            if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
+                Log.i("STATUS UPDATE", "you are at the target stop");
+                stopWrappers.removeMarkerAndCircleOfAssociatedStop(targetStop);
+            }
         }
     }
+
 
     private boolean locationIsInStop (Location location, Stop stop) {
         CircleOptions circleOptionsOfStop = stop.getCircleOptions();
