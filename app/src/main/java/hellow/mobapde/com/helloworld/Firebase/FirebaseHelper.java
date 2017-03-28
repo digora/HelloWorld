@@ -19,67 +19,35 @@ import hellow.mobapde.com.helloworld.Beans.Stop;
 
 public class FirebaseHelper {
 
-    private DatabaseReference stopReference;
-    private DatabaseReference adReference;
+    private DatabaseReference firebaseReference = FirebaseDatabase.getInstance().getReference();
     private Map<String,Stop> stops = new HashMap<>();
     private ArrayList<Adventure> adventures = new ArrayList<>();
+    private static final String STOP_PATH = "stops";
+    private static final String AD_PATH = "adventures";
 
     public FirebaseHelper () {
-        stopReference = FirebaseDatabase.getInstance().getReference("/stops");
-        adReference = FirebaseDatabase.getInstance().getReference("/adventures");
 
-        //On Instantiation of helper add all adventures to array list
-        adReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                for(DataSnapshot child:children){
-                    Adventure value = child.getValue(Adventure.class);
-                    adventures.add(value);
-                }
-            }
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    public DatabaseReference getFirebaseReference() {
+        return firebaseReference;
+    }
 
-            }
-        });
-        //On Instantiation of helper add all adventures to hash map
-        stopReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+    public void setFirebaseReference(DatabaseReference firebaseReference) {
+        this.firebaseReference = firebaseReference;
+    }
 
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                for (DataSnapshot child:children) {
-                    Stop value = child.getValue(Stop.class);
-                    String key = value.getKey();
-                    stops.put(key,value);
-                }
-                System.out.println("Total number of stops: "+ stops.size());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+    public ArrayList<Adventure> getAdventures() {
+        return adventures;
     }
 
     public DatabaseReference getStopReference() {
-        return stopReference;
+        return firebaseReference.child(STOP_PATH);
     }
 
-    public void setStopReference(DatabaseReference stopReference) {
-        this.stopReference = stopReference;
-    }
 
     public DatabaseReference getAdReference() {
-        return adReference;
-    }
-
-    public void setAdReference(DatabaseReference adReference) {
-        this.adReference = adReference;
+        return firebaseReference.child(AD_PATH);
     }
 
     public Map<String, Stop> getStops() {
@@ -90,20 +58,18 @@ public class FirebaseHelper {
         this.stops = stops;
     }
 
-    public ArrayList<Adventure> getAdventures() {
-        return adventures;
-    }
-
     public void setAdventures(ArrayList<Adventure> adventures) {
         this.adventures = adventures;
     }
 
     public void createAdventure(Adventure a){
+        DatabaseReference adReference = firebaseReference.child(AD_PATH);
         String key = adReference.push().getKey();
         a.setKey(key);
         adReference.child(key).setValue(a);
     }
     public void createStop(Stop s){
+        DatabaseReference stopReference = firebaseReference.child(STOP_PATH);
         String key = stopReference.push().getKey();
         s.setKey(key);
         stopReference.child(key).setValue(s);
