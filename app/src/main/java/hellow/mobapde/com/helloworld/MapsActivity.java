@@ -43,7 +43,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import hellow.mobapde.com.helloworld.Converter.MapToArrayListConverter;
@@ -51,9 +50,10 @@ import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
-import hellow.mobapde.com.helloworld.GoogleMapParser.PathWrapperSettings;
-import hellow.mobapde.com.helloworld.GoogleMapParser.StopWrapper;
-import hellow.mobapde.com.helloworld.GoogleMapParser.StopWrapperList;
+import hellow.mobapde.com.helloworld.Wrapper.PathWrapper;
+import hellow.mobapde.com.helloworld.Wrapper.PathWrapperList;
+import hellow.mobapde.com.helloworld.Wrapper.StopWrapper;
+import hellow.mobapde.com.helloworld.Wrapper.StopWrapperList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -69,8 +69,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Adventure currentAdventure;
     private Stop targetStop;
+    private PathWrapper pathToTargetStop;
 
     private StopWrapperList stopWrappers;
+    private PathWrapperList pathWrappers;
 
     private TextView tvCurrentAdventureName;
 
@@ -154,19 +156,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Stop stop1 = new Stop();
         LatLng stop1Coord = new LatLng(14.4671549, 121.0084754);
-        stop1.setMarkerOptions(new MarkerOptions().position(stop1Coord).title("House"));
-        stop1.setCircleOptions(new CircleOptions().center(stop1Coord).fillColor(0x66888888).strokeColor(Color.DKGRAY).radius(20));
+        stop1.setMarkerOptions(new MarkerOptions()
+                .position(stop1Coord)
+                .title("House"));
+        stop1.setCircleOptions(new CircleOptions()
+                .center(stop1Coord)
+                .fillColor(0x66888888)
+                .strokeColor(Color.DKGRAY)
+                .radius(20));
 
         targetStop = stop1;
 
         Stop stop2 = new Stop();
         LatLng stop2Coord = new LatLng(14.4662063, 121.0098848);
-        stop2.setMarkerOptions(new MarkerOptions().position(stop2Coord).title("Japanese Resto"));
-        stop2.setCircleOptions(new CircleOptions().center(stop2Coord).fillColor(0x66888888).strokeColor(Color.DKGRAY).radius(20));
+        stop2.setMarkerOptions(new MarkerOptions()
+                .position(stop2Coord)
+                .title("Japanese Resto"));
+        stop2.setCircleOptions(new CircleOptions()
+                .center(stop2Coord)
+                .fillColor(0x66888888)
+                .strokeColor(Color.DKGRAY)
+                .radius(20));
 
         Stop stop3 = new Stop();
         LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
-        stop3.setMarkerOptions(new MarkerOptions().position(stop3Coord).title("Mega Mol"));
+        stop3.setMarkerOptions(new MarkerOptions()
+                .position(stop3Coord)
+                .title("Mega Mol"));
 
         adventure.addStop("testStop1", stop1);
         adventure.addStop("testStop2", stop2);
@@ -182,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Log.i("Retrieved stops in ad", adventure.getNumberOfStops() + "");
 
         setCurrentAdventure(adventure);
-        addAdventureToMap(adventure, mMap, new PathWrapperSettings(0x66FF0000, 12));
+        addAdventureToMap(adventure, mMap, new PathWrapper(0x66FF0000, 12));
 
         moveCameraToStop (targetStop, mMap);
 
@@ -230,7 +246,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapperSettings pathWrapperSettings) {
+    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapper pathWrapperSettings) {
 
         ArrayList<Stop> stopsOfAdventure;
 
@@ -238,8 +254,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (int i = 0; i < stopsOfAdventure.size(); i++) {
             stopWrappers.add(addStopToMap(stopsOfAdventure.get(i), map));
-
-            Log.i("STOP ADDED", stopsOfAdventure.get(i).getMarkerOptions().getTitle());
         }
 
         // START OF ROUTING POINT TO POINT
@@ -247,8 +261,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         while (i < stopsOfAdventure.size() - 1) {
             // Getting URL to the Google Directions API
 
-            PathWrapperSettings pathWrapperSettingsForURL =
-                    new PathWrapperSettings(pathWrapperSettings.pathColor, pathWrapperSettings.lineWidth);
+            PathWrapper pathWrapperSettingsForURL =
+                    new PathWrapper(stopsOfAdventure.get(i).getLatLng(),
+                            stopsOfAdventure.get(i+1).getLatLng(),
+                            pathWrapperSettings.pathColor,
+                            pathWrapperSettings.lineWidth);
+
+            pathWrappers.add(pathWrapperSettingsForURL);
 
             String url = getUrl(stopsOfAdventure.get(i++).getLatLng(), stopsOfAdventure.get(i).getLatLng());
 
@@ -262,8 +281,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Start downloading json data from Google Directions API
             fetchUrl.execute(pathWrapperSettingsForURL);
-
-            Log.i("Current stop count", i+"");
         }
         // END OF ROUTING POINT TO POINT
     }
@@ -331,7 +348,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (targetStop != null) {
             if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
                 Log.i("STATUS UPDATE", "you are at the target stop");
-                stopWrappers.removeMarkerAndCircleOfAssociatedStop(targetStop);
+                stopWrappers.removeMarkerAndCircleOfAssociatedStop(targetStop); // TODO not remove but to color a different shade
             }
         }
     }
@@ -375,10 +392,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Fetches data from url passed
-    private class FetchUrl extends AsyncTask<PathWrapperSettings, Void, PathWrapperSettings> {
+    private class FetchUrl extends AsyncTask<PathWrapper, Void, PathWrapper> {
 
         @Override
-        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
+        protected PathWrapper doInBackground(PathWrapper... pathWrapperSettings) {
 
             // For storing data from web service
             String data = "";
@@ -399,7 +416,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         @Override
-        protected void onPostExecute(PathWrapperSettings result) {
+        protected void onPostExecute(PathWrapper result) {
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
@@ -448,11 +465,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return data;
     }
 
-    private class ParserTask extends AsyncTask<PathWrapperSettings, Integer, PathWrapperSettings> {
+    private class ParserTask extends AsyncTask<PathWrapper, Integer, PathWrapper> {
 
         // Parsing the data in non-ui thread
         @Override
-        protected PathWrapperSettings doInBackground(PathWrapperSettings... pathWrapperSettings) {
+        protected PathWrapper doInBackground(PathWrapper... pathWrapperSettings) {
 
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
@@ -479,7 +496,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Executes in UI thread, after the parsing process
         @Override
-        protected void onPostExecute(PathWrapperSettings result) {
+        protected void onPostExecute(PathWrapper result) {
             ArrayList<LatLng> points;
             PolylineOptions lineOptions = null;
 

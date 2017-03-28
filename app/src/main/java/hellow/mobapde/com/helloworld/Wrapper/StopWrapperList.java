@@ -1,4 +1,4 @@
-package hellow.mobapde.com.helloworld.GoogleMapParser;
+package hellow.mobapde.com.helloworld.Wrapper;
 
 import java.util.ArrayList;
 
