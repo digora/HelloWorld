@@ -8,6 +8,8 @@ import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
 
 public class AdventureActivity extends AppCompatActivity {
 
+
+    /*Testes*/
     ViewPager vpFeaturedList;
     CustomSwipeAdapter customSwipeAdapter;
 
