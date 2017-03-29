@@ -69,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Adventure currentAdventure;
     private Stop targetStop;
-    private PathWrapper pathToTargetStop;
+    private PathWrapper pathWrapperToTargetStop;
 
     private StopWrapperList stopWrappers;
     private PathWrapperList pathWrappers;
@@ -88,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         firebaseHelper = new FirebaseHelper();
 
         stopWrappers = new StopWrapperList();
+        pathWrappers = new PathWrapperList();
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -146,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -344,6 +345,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         currentLocation = location;
+
+        LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
+
+        PathWrapper pathWrapperForURL =
+                new PathWrapper(currentLatLng,
+                        targetStop.getLatLng(),
+                        0x660000CC,
+                        12);
+
+        if (pathWrapperToTargetStop != null)
+            pathWrapperToTargetStop.removePolyline();
+
+        pathWrapperToTargetStop = pathWrapperForURL;
+
+        String url = getUrl(currentLatLng, targetStop.getLatLng());
+
+        Log.i("Generated URL", url);
+
+        pathWrapperForURL.url = url;
+
+        Log.i("SET URL", pathWrapperForURL.url);
+
+        FetchUrl fetchUrl = new FetchUrl();
+
+        // Start downloading json data from Google Directions API
+        fetchUrl.execute(pathWrapperForURL);
 
         if (targetStop != null) {
             if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
