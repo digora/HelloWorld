@@ -1,27 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_profile"
+    android:id="@+id/rl_activity_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="hellow.mobapde.com.helloworld.ProfileActivity">
 
+    <!--
+    Primary: #F44336
+    Dark: #D32F2F
+    Accent: #00E5FF
+    -->
+
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gx_stars_bg"
+        android:layout_alignTop="@+id/ll_profile_banner"
+        android:layout_alignBottom="@id/ll_profile_banner"
+        android:layout_alignLeft="@id/ll_profile_banner"
+        android:layout_alignRight="@id/ll_profile_banner"/>
+
+
     <LinearLayout
-        android:id="@+id/ll_profile_banner"
+        android:id="@id/ll_profile_banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp">
+
 
 
         <!-- Name and Profile Pic -->
         <LinearLayout
             android:id="@+id/ll_image_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
@@ -30,30 +49,26 @@
                 android:id="@+id/iv_profile"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/tv_adventurer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name/Title Here"
-                android:textSize="18sp" />
+                android:text="Juan Dela Cruz"
+                android:textColor="#FFF"
+                android:textSize="28sp" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stats"
-            android:textSize="38sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/ll_options_container"
-        android:layout_weight="1">
+        android:layout_below="@id/ll_profile_banner">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,106 +76,82 @@
             android:id="@+id/ll_information_container"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:background="#b0b0b0">
+            android:padding="32dp">
+
+            <TextView
+                android:paddingTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6"
+                android:textColor="#000"
+                android:textSize="32sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Information"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:textSize="24sp" />
+                android:textSize="12sp"
+                android:paddingBottom="16dp"
+                android:text="Adventures Completed"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:textColor="#000"
+                android:textSize="32sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:paddingBottom="16dp"
+                android:text="Stamps"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#000"
+                android:textSize="32sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:paddingBottom="16dp"
+                android:text="More Statistics"/>
 
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_stamps_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="#FFF">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_marginRight="6dp"
-                    android:text="Stamps"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="(See All)"
-                    android:clickable="true"
-                    android:textColor="#0000FF"
-                    android:textSize="24sp"
-                    android:id="@+id/tv_stamps_see_all"/>
-
-            </LinearLayout>
-
-
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/rv_stamps"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_adventures_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:background="#b0b0b0">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="6dp"
-                    android:text="Adventures"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="(See All)"
-                    android:clickable="true"
-                    android:textColor="#0000FF"
-                    android:textSize="24sp"
-                    android:id="@+id/tv_adventures_see_all"/>
-
-            </LinearLayout>
-
-
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_adventures"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
-        </LinearLayout>
-
     </LinearLayout>
 
-</LinearLayout>
+    <Button
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="4dp"
+        android:id="@+id/btn_profile_back"
+        android:background="@drawable/gx_back" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gx_stamp_icon"
+        android:layout_alignParentRight="true"
+        android:id="@+id/fbtn_va_stamps"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="160dp"
+        android:scaleType="centerCrop"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gx_adventures_icon"
+        android:layout_toLeftOf="@id/fbtn_va_stamps"
+        android:layout_marginTop="160dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/fbtn_va_adventures"
+        android:scaleType="centerCrop"/>
+
+</RelativeLayout>

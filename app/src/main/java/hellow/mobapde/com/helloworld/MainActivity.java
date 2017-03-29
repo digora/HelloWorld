@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.jar.*;
@@ -22,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int MY_PERMISSION_MAP_GRANTED = 1;
     Button btnStart;
+    LinearLayout llNamePromptContainer;
+    RelativeLayout rlMainMenuContainer;
+    private FirebaseHelper fh;
     private FirebaseHelper firebaseHelper = new FirebaseHelper();
 
     @Override
@@ -31,16 +36,22 @@ public class MainActivity extends AppCompatActivity {
 
         requestPermission();
 
+        llNamePromptContainer = (LinearLayout) findViewById(R.id.ll_name_prompt_container);
+
+        rlMainMenuContainer = (RelativeLayout) findViewById(R.id.rl_main_menu_container);
+
         btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent mapIntent = new Intent();
-                mapIntent.setClass(getBaseContext(), MapsActivity.class);
+                mapIntent.setClass(getBaseContext(), MapsActivity.class); //LoginActivity if user still has not entered his/her name yet.
 
                 if(ContextCompat.checkSelfPermission(getBaseContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     startActivity(mapIntent);
+                    /*rlMainMenuContainer.setVisibility(View.GONE);
+                    llNamePromptContainer.setVisibility(View.VISIBLE);*/
                 }else{
                     Toast.makeText(MainActivity.this, "Map Permission Required", Toast.LENGTH_SHORT).show();
                 }

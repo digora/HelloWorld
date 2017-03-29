@@ -4,38 +4,92 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/gx_stars_bg"
+
     tools:context="hellow.mobapde.com.helloworld.MainActivity">
 
+    <!--
+    Primary: #F44336
+    Dark: #D32F2F
+    Accent: #00E5FF
+    -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:gravity="center"
+        android:id="@+id/rl_main_menu_container">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/iv_title_image"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/rocket_ship"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Hello\n     World!"
+            android:layout_below="@id/iv_title_image"
+            android:textSize="56sp"
+            android:id="@+id/tv_greeting"
+            android:textColor="#FFF"
+            android:layout_centerHorizontal="true"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:id="@+id/btn_start"
+            android:layout_below="@id/tv_greeting"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorAccent"
+            android:textColor="#e6000000"
+            android:text="Explore"/>
+    </RelativeLayout>
 
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:id="@+id/iv_title_image"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="125dp"
-        android:src="@drawable/rocket_ship"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:layout_below="@id/iv_title_image"
-        android:textSize="42sp"
-        android:id="@+id/tv_greeting"
-        android:layout_centerHorizontal="true"
-        />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_start"
-        android:layout_below="@id/tv_greeting"
-        android:layout_centerHorizontal="true"
-        android:text="Explore"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:gravity="center"
+        android:id="@+id/ll_name_prompt_container"
+        tools:context="hellow.mobapde.com.helloworld.LoginActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_name_prompt"
+            android:textAlignment="center"
+            android:textSize="40dp"
+            android:text="Whats your name adventurer."
+            android:textColor="#FFF"/>
+
+        <EditText
+            android:layout_width="250dp"
+            android:textSize="32dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_adv_name"
+            android:textColor="#FFF"
+            android:hint="Name"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_finish"
+            android:background="@color/colorAccent"
+            android:textColor="#000"
+            android:text="Finish"/>
+
+
+    </LinearLayout>
 
 </RelativeLayout>
