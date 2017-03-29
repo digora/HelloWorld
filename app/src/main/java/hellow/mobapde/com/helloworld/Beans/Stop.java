@@ -1,6 +1,8 @@
 package hellow.mobapde.com.helloworld.Beans;
 
+import android.graphics.Color;
 import android.graphics.Picture;
+import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -20,16 +22,22 @@ public class Stop {
     private MarkerOptions markerOptions;
     private Picture picture;
     private CircleOptions circleOptions;
+    private boolean visited;
 
 
     public Stop() {
-
+        visited = false;
     }
 
-    public Stop(String latitude, String longitude, String description) {
+    public Stop(String latitude, String longitude, String description, MarkerOptions markerOptions, Picture picture, CircleOptions circleOptions, boolean visited) {
+
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
+        this.markerOptions = markerOptions;
+        this.picture = picture;
+        this.circleOptions = circleOptions;
+        this.visited = visited;
     }
 
     public String getKey() {
@@ -105,4 +113,15 @@ public class Stop {
         circleOptions.radius(radius);
     }
 
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public void toggleVisited () {
+        visited = !visited;
+    }
 }

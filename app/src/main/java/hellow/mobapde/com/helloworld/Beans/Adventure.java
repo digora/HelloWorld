@@ -5,8 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -39,11 +41,15 @@ public class Adventure {
     /* For temporary data */
 
     public Adventure() {
+        this.status = "Not Started";
+
+        stops = new LinkedHashMap<>();
     }
 
     public Adventure(String name, String details) {
         this.name = name;
         this.details = details;
+        this.status = "Not Started";
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
@@ -101,12 +107,20 @@ public class Adventure {
         this.status = status;
     }
 
-    public Stop getStop (int index) {
-        return stops.get(index);
+    public Stop getStop (String key) {
+        return stops.get(key);
     }
 
     public int getNumberOfStops () {
         return stops.size();
+    }
+
+    public void addStop (String key, Stop stop) {
+        stops.put(key, stop);
+    }
+
+    public LatLng getLatLngOfStop (String key) {
+        return stops.get(key).getLatLng();
     }
 
 }

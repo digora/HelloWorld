@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -42,16 +41,22 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".MainActivity">
+            android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileActivity"></activity>
-        <activity android:name=".AdventureActivity"></activity>
+        <activity android:name=".ProfileActivity"
+            android:theme="@style/AppTheme.ActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AdventureActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AdventureDetailsActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
