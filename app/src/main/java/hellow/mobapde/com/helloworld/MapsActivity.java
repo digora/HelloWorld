@@ -74,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
 
-    private Adventure currentAdventure; // SET ON SHARED PREFERENCES
+    private String currentAdventureKey; // SET ON SHARED PREFERENCES or IN PROFILE
     private Stop targetStop;
     private PathWrapper pathWrapperToTargetStop;
 
@@ -99,8 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopWrappers = new StopWrapperList();
         pathWrappers = new PathWrapperList();
 
-        currentAdventure = new Adventure();
-        currentAdventure.setKey("-Kg7iwO2x-7kwHkgmEbQ");
+        currentAdventureKey = "-Kg7iwO2x-7kwHkgmEbQ"; // HARD CODED
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -127,37 +126,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
 
-        // TODO try to retrieve currentAdventure from Firebase
-
-        if (currentAdventure != null) {
-            adventureReference = firebaseHelper.getAdReference().child(currentAdventure.getKey());
+        if (currentAdventureKey != null) {
+            adventureReference = firebaseHelper.getAdReference().child(currentAdventureKey);
 
             adventureReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Adventure adventure = dataSnapshot.getValue(Adventure.class);
 
-                    // HARD CODED MARKER OPTIONS and CIRCLE OPTIONS
-                    Object[] objects = adventure.getStops().keySet().toArray();
-
-                    String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
-
-                    for (int i = 0; i < adventure.getNumberOfStops(); i++) {
-                        Stop stop = adventure.getStop(keys[i]);
-
-                        stop.setMarkerOptions(new MarkerOptions()
-                                .position(stop.getLatLng())
-                                .title(stop.getDescription()));
-
-                        stop.setCircleOptions(new CircleOptions()
-                                .center(stop.getLatLng())
-                                .fillColor(0x66888888)
-                                .strokeColor(Color.DKGRAY)
-                                .radius(20));
-                    }
-
+                    initMarkersAndCircles(adventure);
                     setCurrentAdventure(adventure);
                     addAdventureToMap(adventure, mMap, new PathWrapper(0x66FF0000, 12));
+
+                    onLocationChanged(currentLocation);
 
                     Log.i("Retrieved Adventure", adventure.getName());
                 }
@@ -307,7 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         // START OF ROUTING POINT TO POINT
-        int i = 0;
+        /*int i = 0;
         while (i < stopsOfAdventure.size() - 1) {
             // Getting URL to the Google Directions API
 
@@ -331,7 +312,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Start downloading json data from Google Directions API
             fetchUrl.execute(pathWrapperSettingsForURL);
-        }
+        }*/
         // END OF ROUTING POINT TO POINT
     }
 
@@ -364,13 +345,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void setCurrentAdventure(Adventure adventure) {
-        this.currentAdventure = adventure;
+        currentAdventureKey = adventure.getKey();
 
         tvCurrentAdventureName.setText(adventure.getName());
     }
 
-    public Adventure getCurrentAdventure() {
-        return this.currentAdventure;
+    public String getCurrentAdventureKey() {
+        return currentAdventureKey;
+    }
+
+    public void setCurrentAdventureKey(String key) {
+        currentAdventureKey = key;
     }
 
     @Override
@@ -429,6 +414,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void initMarkersAndCircles (Adventure adventure) {
+        Object[] objects = adventure.getStops().keySet().toArray();
+
+        String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
+
+        for (int i = 0; i < adventure.getNumberOfStops(); i++) {
+
+            Stop stop = adventure.getStop(keys[i]);
+
+            stop.setMarkerOptions(new MarkerOptions()
+                    .position(stop.getLatLng())
+                    .title(stop.getDescription()));
+
+            stop.setCircleOptions(new CircleOptions()
+                    .center(stop.getLatLng())
+                    .fillColor(0x66888888)
+                    .strokeColor(Color.DKGRAY)
+                    .radius(20));
+        }
+    }
 
     private boolean locationIsInStop (Location location, Stop stop) {
         CircleOptions circleOptionsOfStop = stop.getCircleOptions();
