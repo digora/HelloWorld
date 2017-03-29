@@ -21,7 +21,7 @@ public class Adventure {
     private String details;
 
     @JsonIgnore
-    private String status;
+    private boolean status;
     @JsonIgnore
     private String key;
     @JsonIgnore
@@ -41,7 +41,7 @@ public class Adventure {
     /* For temporary data */
 
     public Adventure() {
-        this.status = "Not Started";
+        this.status = false;
 
         stops = new LinkedHashMap<>();
     }
@@ -49,13 +49,13 @@ public class Adventure {
     public Adventure(String name, String details) {
         this.name = name;
         this.details = details;
-        this.status = "Not Started";
+        this.status = false;
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
         this.name = name;
         this.details = details;
-        this.status = status;
+        this.status = Boolean.parseBoolean(status);
         this.picture = picture;
     }
 
@@ -99,12 +99,12 @@ public class Adventure {
         this.details = details;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = Boolean.parseBoolean(status);
     }
 
     public Stop getStop (String key) {
