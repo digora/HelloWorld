@@ -89,7 +89,7 @@ public class Stop {
     }
 
     public LatLng getLatLng() {
-        return markerOptions.getPosition();
+        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
     }
 
     public void setLatLng(LatLng latLng) {
