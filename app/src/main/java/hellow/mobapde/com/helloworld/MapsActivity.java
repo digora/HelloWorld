@@ -27,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -432,8 +433,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         currentLocation = location;
 
+        StopWrapper activeStopWrapper = locationIsInStopWrapper(location, stopWrappers);
+
+        if (activeStopWrapper != null) {
+            activeStopWrapper.getMarker().setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+            Log.i("Stop Detected", activeStopWrapper.getStop().getDescription());
+        } else {
+            Log.i("Stop Detected", "none");
+        }
+
         if (targetStop != null) {
-            // TODO scan every StopWrapper set to see if you stepped in the radius
 
             LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
 
@@ -484,14 +494,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private boolean locationIsInCircle (Location location, CircleOptions circleOptions) {
-        float[] distance = new float[2];
+    private StopWrapper locationIsInStopWrapper (Location location, StopWrapperList stopWrappers) {
+        float[] distance;
 
-        Location.distanceBetween(location.getLatitude(),
-                location.getLongitude(), circleOptions.getCenter().latitude,
-                circleOptions.getCenter().longitude, distance);
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            distance = new float[2];
+            StopWrapper currentStopWrapper = stopWrappers.get(i);
 
-        return distance[0] < circleOptions.getRadius();
+            Location.distanceBetween(location.getLatitude(),
+                    location.getLongitude(),
+                    currentStopWrapper.getCircle().getCenter().latitude,
+                    currentStopWrapper.getCircle().getCenter().longitude,
+                    distance);
+
+            if ( distance[0] < currentStopWrapper.getCircle().getRadius() ) {
+                return currentStopWrapper;
+            }
+        }
+
+        return null;
     }
 
     private String getUrl(LatLng origin, LatLng dest) {
