@@ -12,9 +12,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String currentAdventureKey; // SET ON SHARED PREFERENCES or IN PROFILE
     private Stop targetStop;
-    private PathWrapper pathWrapperToTargetStop;
+    private PathWrapper currentPathWrapper;
 
     private StopWrapperList stopWrappers;
     private PathWrapperList pathWrappers;
@@ -190,6 +192,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                View v = getLayoutInflater().inflate(R.layout.windowlayout, null);
+
+                LatLng latLng = marker.getPosition();
+
+                return v;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
+                        currentLocation.getLongitude());
+
+                PathWrapper pathWrapperForURL =
+                        new PathWrapper(currentLatLng,
+                                marker.getPosition(),
+                                0x660000FF,
+                                24);
+
+                if (currentPathWrapper != null)
+                    currentPathWrapper.removePolyline();
+
+                currentPathWrapper = pathWrapperForURL;
+
+                String url = getUrl(currentLatLng, marker.getPosition());
+
+                Log.i("Generated URL", url);
+
+                pathWrapperForURL.url = url;
+
+                Log.i("SET URL", pathWrapperForURL.url);
+
+                FetchUrl fetchUrl = new FetchUrl();
+
+                // Start downloading json data from Google Directions API
+                fetchUrl.execute(pathWrapperForURL);
+            }
+        });
 
         /*Adventure adventure = new Adventure(); // FOR TESTING
 
@@ -381,10 +433,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = location;
 
         if (targetStop != null) {
-            if (locationIsInStop(location, targetStop)) { // if current location is already in the target stop
-                Log.i("STATUS UPDATE", "you are at the target stop");
-                stopWrappers.removeMarkerAndCircleOfAssociatedStop(targetStop); // TODO not remove but to color a different shade
-            }
+            // TODO scan every StopWrapper set to see if you stepped in the radius
 
             LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
 
@@ -394,10 +443,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             0x660000CC,
                             12);
 
-            if (pathWrapperToTargetStop != null)
-                pathWrapperToTargetStop.removePolyline();
+            if (currentPathWrapper != null)
+                currentPathWrapper.removePolyline();
 
-            pathWrapperToTargetStop = pathWrapperForURL;
+            currentPathWrapper = pathWrapperForURL;
 
             String url = getUrl(currentLatLng, targetStop.getLatLng());
 
@@ -435,16 +484,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private boolean locationIsInStop (Location location, Stop stop) {
-        CircleOptions circleOptionsOfStop = stop.getCircleOptions();
-
+    private boolean locationIsInCircle (Location location, CircleOptions circleOptions) {
         float[] distance = new float[2];
 
         Location.distanceBetween(location.getLatitude(),
-                location.getLongitude(), circleOptionsOfStop.getCenter().latitude,
-                circleOptionsOfStop.getCenter().longitude, distance);
+                location.getLongitude(), circleOptions.getCenter().latitude,
+                circleOptions.getCenter().longitude, distance);
 
-        return distance[0] < circleOptionsOfStop.getRadius();
+        return distance[0] < circleOptions.getRadius();
     }
 
     private String getUrl(LatLng origin, LatLng dest) {
@@ -611,7 +658,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Drawing polyline in the Google Map for the i-th route
             if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
+                result.setPolyline(mMap.addPolyline(lineOptions));
             }
             else {
                 Log.d("onPostExecute","without Polylines drawn");
