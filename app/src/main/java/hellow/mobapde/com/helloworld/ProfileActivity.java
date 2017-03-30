@@ -53,21 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         createContentView();
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("/profiles/1/name");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("Fyrebass", dataSnapshot.getValue(String.class));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        Log.i("Reference", databaseReference.toString());
 
     }
 

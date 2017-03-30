@@ -4,7 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gx_stars_bg"
+    android:background="@color/colorPrimary"
 
     tools:context="hellow.mobapde.com.helloworld.MainActivity">
 
@@ -26,19 +26,20 @@
             android:layout_height="200dp"
             android:id="@+id/iv_title_image"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/rocket_ship"/>
+            android:src="@drawable/rocket_ship"
+            android:background="@drawable/shape_circle"/>
 
         <TextView
+            android:id="@+id/tv_greeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="Hello\n     World!"
             android:layout_below="@id/iv_title_image"
-            android:textSize="56sp"
-            android:id="@+id/tv_greeting"
-            android:textColor="#FFF"
             android:layout_centerHorizontal="true"
-            />
+            android:layout_marginTop="32dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Hello\n     World!"
+            android:textColor="@color/fontColor"
+            android:textSize="56sp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -47,9 +48,11 @@
             android:id="@+id/btn_start"
             android:layout_below="@id/tv_greeting"
             android:layout_centerHorizontal="true"
-            android:background="@color/colorAccent"
-            android:textColor="#e6000000"
-            android:text="Explore"/>
+            android:background="@null"
+            android:textSize="24sp"
+            android:textColor="@color/fontColor"
+            android:text="EXPLORE"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
 

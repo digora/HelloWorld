@@ -16,7 +16,7 @@
         android:text="Stamps"
         android:textSize="32dp"
         android:layout_weight="5"
-        android:textColor="#000"/>
+        android:textColor="@color/profileFontColor"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -25,14 +25,14 @@
         android:id="@+id/rv_stamps"/>
 
     <TextView
+        android:id="@+id/tv_stamp_pop_back"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="5"
         android:layout_gravity="right"
+        android:layout_weight="5"
         android:paddingRight="24dp"
-        android:textSize="16dp"
-        android:textColor="#000"
-        android:id="@+id/tv_stamp_pop_back"
-        android:text="BACK" />
+        android:text="BACK"
+        android:gravity="center"
+        android:textColor="@color/profileFontColor" />
 
 </LinearLayout>

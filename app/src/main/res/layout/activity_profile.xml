@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_activity_profile"
     android:layout_width="match_parent"
@@ -14,7 +15,7 @@
     -->
 
 
-
+<!--
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,18 +23,19 @@
         android:layout_alignTop="@+id/ll_profile_banner"
         android:layout_alignBottom="@id/ll_profile_banner"
         android:layout_alignLeft="@id/ll_profile_banner"
-        android:layout_alignRight="@id/ll_profile_banner"/>
+        android:layout_alignRight="@id/ll_profile_banner"/>-->
 
 
     <LinearLayout
-        android:id="@id/ll_profile_banner"
+        android:id="@+id/ll_profile_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:paddingBottom="32dp">
+        android:paddingBottom="32dp"
+        android:background="@color/colorPrimary">
 
 
 
@@ -57,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Juan Dela Cruz"
+                android:fontFamily="sans-serif-light"
                 android:textColor="#FFF"
                 android:textSize="28sp" />
         </LinearLayout>
@@ -65,61 +68,62 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/ll_options_container"
-        android:layout_below="@id/ll_profile_banner">
+        android:layout_below="@id/ll_profile_banner"
+        android:padding="32dp"
+        android:background="#FFF">
 
         <LinearLayout
+            android:id="@+id/ll_information_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/ll_information_container"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="32dp">
+            android:orientation="vertical">
 
             <TextView
-                android:paddingTop="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="16dp"
                 android:text="6"
-                android:textColor="#000"
+                android:textColor="@color/profileFontColor"
                 android:textSize="32sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
                 android:paddingBottom="16dp"
-                android:text="Adventures Completed"/>
+                android:text="Adventures Completed"
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4"
-                android:textColor="#000"
+                android:textColor="@color/profileFontColor"
                 android:textSize="32sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
                 android:paddingBottom="16dp"
-                android:text="Stamps"/>
+                android:text="Stamps"
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textColor="#000"
+                android:textColor="@color/profileFontColor"
                 android:textSize="32sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
                 android:paddingBottom="16dp"
-                android:text="More Statistics"/>
+                android:text="More Statistics"
+                android:textSize="12sp" />
 
 
         </LinearLayout>
@@ -135,23 +139,27 @@
 
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbtn_va_stamps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/gx_stamp_icon"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:id="@+id/fbtn_va_stamps"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="160dp"
-        android:scaleType="centerCrop"/>
+        android:layout_alignTop="@+id/fbtn_va_adventures"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gx_stamp_icon"
+        app:backgroundTint="@color/colorPrimaryDark" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbtn_va_adventures"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/gx_adventures_icon"
-        android:layout_toLeftOf="@id/fbtn_va_stamps"
-        android:layout_marginTop="160dp"
         android:layout_marginRight="16dp"
-        android:id="@+id/fbtn_va_adventures"
-        android:scaleType="centerCrop"/>
+        android:layout_marginTop="160dp"
+        android:layout_toLeftOf="@id/fbtn_va_stamps"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gx_adventures_icon"
+        app:backgroundTint="@color/colorPrimaryDark" />
 
 </RelativeLayout>

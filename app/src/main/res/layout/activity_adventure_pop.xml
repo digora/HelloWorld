@@ -31,10 +31,10 @@
         android:layout_height="match_parent"
         android:layout_weight="5"
         android:layout_gravity="right"
-        android:textSize="16dp"
-        android:textColor="#000"
+        android:textColor="@color/profileFontColor"
         android:paddingRight="24dp"
         android:id="@+id/tv_adv_pop_back"
+        android:gravity="center"
         android:text="BACK" />
 
 </LinearLayout>
