@@ -11,6 +11,8 @@ import hellow.mobapde.com.helloworld.Beans.Stop;
 
 
 public class StopWrapper {
+    private String adventureKey;
+
     private Stop stop;
     private Marker marker;
     private Circle circle;
@@ -43,6 +45,14 @@ public class StopWrapper {
 
     public void setCircle(Circle circle) {
         this.circle = circle;
+    }
+
+    public String getAdventureKey() {
+        return adventureKey;
+    }
+
+    public void setAdventureKey(String adventureKey) {
+        this.adventureKey = adventureKey;
     }
 
     public boolean isAssociated(Stop stop) {

@@ -339,34 +339,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < stopsOfAdventure.size(); i++) {
             stopWrappers.add(addStopToMap(stopsOfAdventure.get(i), map));
         }
+    }
 
-        // START OF ROUTING POINT TO POINT
-        /*int i = 0;
-        while (i < stopsOfAdventure.size() - 1) {
-            // Getting URL to the Google Directions API
+    private void removeAdventureFromMap(Adventure adventure, GoogleMap map) {
 
-            PathWrapper pathWrapperSettingsForURL =
-                    new PathWrapper(stopsOfAdventure.get(i).getLatLng(),
-                            stopsOfAdventure.get(i+1).getLatLng(),
-                            pathWrapperSettings.pathColor,
-                            pathWrapperSettings.lineWidth);
+        // used for cancelling adventures
 
-            pathWrappers.add(pathWrapperSettingsForURL);
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (adventure.getKey().equals(stopWrappers.get(i).getAdventureKey())) {
+                stopWrappers.get(i).removeMarkerAndCircle();
 
-            String url = getUrl(stopsOfAdventure.get(i++).getLatLng(), stopsOfAdventure.get(i).getLatLng());
+                stopWrappers.remove(i);
 
-            Log.i("Generated URL", url);
+                i = 0;
+            }
+        }
 
-            pathWrapperSettingsForURL.url = url;
+    }
 
-            Log.i("SET URL", pathWrapperSettingsForURL.url);
+    private void removeOtherAdventuresExcept(Adventure adventure, GoogleMap map) {
 
-            FetchUrl fetchUrl = new FetchUrl();
+        // used for clearing other unnecessary stops
 
-            // Start downloading json data from Google Directions API
-            fetchUrl.execute(pathWrapperSettingsForURL);
-        }*/
-        // END OF ROUTING POINT TO POINT
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (!adventure.getKey().equals(stopWrappers.get(i).getAdventureKey())) {
+                stopWrappers.get(i).removeMarkerAndCircle();
+
+                stopWrappers.remove(i);
+
+                i = 0;
+            }
+        }
+
     }
 
     private StopWrapper addStopToMap(Stop stop, GoogleMap map) {
