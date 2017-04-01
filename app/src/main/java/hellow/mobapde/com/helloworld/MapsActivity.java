@@ -3,6 +3,7 @@ package hellow.mobapde.com.helloworld;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -62,6 +63,7 @@ import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
 import hellow.mobapde.com.helloworld.Settings.CircleSettings;
 import hellow.mobapde.com.helloworld.Settings.MarkerSettings;
+import hellow.mobapde.com.helloworld.Settings.PathSettings;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapper;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapperList;
 import hellow.mobapde.com.helloworld.Wrapper.StopWrapper;
@@ -225,8 +227,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 PathWrapper pathWrapperForURL =
                         new PathWrapper(currentLatLng,
                                 marker.getPosition(),
-                                0x660000FF,
-                                24);
+                                PathSettings.getPathColor(),
+                                PathSettings.getPathThickness());
 
                 if (currentPathWrapper != null)
                     currentPathWrapper.removePolyline();
@@ -430,8 +432,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             PathWrapper pathWrapperForURL =
                     new PathWrapper(currentLatLng,
                             targetStop.getLatLng(),
-                            0x660000CC,
-                            12);
+                            PathSettings.getPathColor(),
+                            PathSettings.getPathColor());
 
             if (currentPathWrapper != null)
                 currentPathWrapper.removePolyline();
@@ -471,6 +473,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .center(stop.getLatLng())
                     .fillColor(CircleSettings.getFillColor())
                     .strokeColor(CircleSettings.getStrokeColor())
+                    .radius(CircleSettings.getRadius())
                     .radius(20));
         }
     }
@@ -489,7 +492,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .center(stop.getLatLng())
                     .fillColor(CircleSettings.getFillColor())
                     .strokeColor(CircleSettings.getStrokeColor())
-                    .radius(20));
+                    .radius(CircleSettings.getRadius()));
         }
     }
 
@@ -727,7 +730,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Toast.makeText(MapsActivity.this, "Couldn't display nearby stops. " +
+                            "Please check network connection.", Toast.LENGTH_SHORT).show();
                 }
             });
 

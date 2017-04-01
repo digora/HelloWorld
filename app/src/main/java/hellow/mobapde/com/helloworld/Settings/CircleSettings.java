@@ -2,6 +2,8 @@ package hellow.mobapde.com.helloworld.Settings;
 
 import android.graphics.Color;
 
+import hellow.mobapde.com.helloworld.R;
+
 /**
  * Created by patricktobias on 01/04/2017.
  */
@@ -9,11 +11,15 @@ import android.graphics.Color;
 public class CircleSettings {
 
     public static int getFillColor () {
-        return 0x66888888;
+        return 0xBBFFFFFF;
     }
 
     public static int getStrokeColor () {
-        return Color.DKGRAY;
+        return 0xFFD32F2F;
+    }
+
+    public static int getRadius () {
+        return 20;
     }
 
 }
