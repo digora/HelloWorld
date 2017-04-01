@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -183,15 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker ne ar Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -273,8 +266,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void moveCameraToStop(Stop stop, GoogleMap map) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(stop.getLatLng())
-                .zoom(6) // TODO optimize to see all points (including your position)
-                .bearing(20) // TODO optimize to see all points (including your position)
+                .zoom(17)
+                .bearing(20)
                 .tilt(0)
                 .build();
 
@@ -292,6 +285,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
 
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private void viewAllMarkersInMap(StopWrapperList stopWrappers, GoogleMap map) {
+
+        Marker[] markers = new Marker[stopWrappers.size()];
+
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            markers[i] = stopWrappers.get(i).getMarker();
+        }
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+
+        LatLngBounds bounds = builder.build();
+
+        int padding = 20; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        map.moveCamera(cu);
     }
 
     private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapper pathWrapperSettings) {
