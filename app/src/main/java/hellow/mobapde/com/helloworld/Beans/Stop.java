@@ -81,11 +81,11 @@ public class Stop {
     }
 
     public double getLatitude() {
-        return markerOptions.getPosition().latitude;
+        return Double.parseDouble(latitude);
     }
 
     public double getLongitude() {
-        return markerOptions.getPosition().longitude;
+        return Double.parseDouble(longitude);
     }
 
     public LatLng getLatLng() {

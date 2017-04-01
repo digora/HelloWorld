@@ -70,6 +70,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    public final static int NEARBY_METERS = 1000;
+
     private GoogleMap mMap;
     private FloatingActionButton dashboardButton;
     private Button btnViewAdventures;
@@ -102,7 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopWrappers = new StopWrapperList();
         pathWrappers = new PathWrapperList();
 
-        currentAdventureKey = "-Kg7iwO2x-7kwHkgmEbQ"; // HARD CODED
+        //currentAdventureKey = "-Kg7iwO2x-7kwHkgmEbQ"; // HARD CODED
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -243,48 +245,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 fetchUrl.execute(pathWrapperForURL);
             }
         });
-
-        /*Adventure adventure = new Adventure(); // FOR TESTING
-
-        adventure.setName("A Trip to the Rice Fields");
-
-        Stop stop1 = new Stop();
-        LatLng stop1Coord = new LatLng(14.4671549, 121.0084754);
-        stop1.setMarkerOptions(new MarkerOptions()
-                .position(stop1Coord)
-                .title("House"));
-        stop1.setCircleOptions(new CircleOptions()
-                .center(stop1Coord)
-                .fillColor(0x66888888)
-                .strokeColor(Color.DKGRAY)
-                .radius(20));
-
-        targetStop = stop1;
-
-        Stop stop2 = new Stop();
-        LatLng stop2Coord = new LatLng(14.4662063, 121.0098848);
-        stop2.setMarkerOptions(new MarkerOptions()
-                .position(stop2Coord)
-                .title("Japanese Resto"));
-        stop2.setCircleOptions(new CircleOptions()
-                .center(stop2Coord)
-                .fillColor(0x66888888)
-                .strokeColor(Color.DKGRAY)
-                .radius(20));
-
-        Stop stop3 = new Stop();
-        LatLng stop3Coord = new LatLng(14.583308949994862, 121.05645965784788);
-        stop3.setMarkerOptions(new MarkerOptions()
-                .position(stop3Coord)
-                .title("Mega Mol"));
-
-        adventure.addStop("testStop1", stop1);
-        adventure.addStop("testStop2", stop2);
-
-        setCurrentAdventure(adventure);
-        addAdventureToMap(adventure, mMap, new PathWrapper(0x66FF0000, 12));
-
-        moveCameraToStop (targetStop, mMap);*/
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -448,7 +408,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (targetStop != null) {
-
             LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
 
             PathWrapper pathWrapperForURL =
@@ -475,6 +434,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Start downloading json data from Google Directions API
             fetchUrl.execute(pathWrapperForURL);
         }
+
+        if (currentAdventureKey.isEmpty()) {
+            DisplayNearStops displayNearStops = new DisplayNearStops();
+
+            displayNearStops.execute(currentLocation);
+        }
     }
 
     private void initMarkersAndCircles (Adventure adventure) {
@@ -485,6 +450,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < adventure.getNumberOfStops(); i++) {
 
             Stop stop = adventure.getStop(keys[i]);
+
+            stop.setMarkerOptions(new MarkerOptions()
+                    .position(stop.getLatLng())
+                    .title(stop.getDescription()));
+
+            stop.setCircleOptions(new CircleOptions()
+                    .center(stop.getLatLng())
+                    .fillColor(0x66888888)
+                    .strokeColor(Color.DKGRAY)
+                    .radius(20));
+        }
+    }
+
+    private void initMarkersAndCircles (ArrayList <Stop> stops) {
+        for (int i = 0; i < stops.size(); i++) {
+
+            Stop stop = stops.get(i);
 
             stop.setMarkerOptions(new MarkerOptions()
                     .position(stop.getLatLng())
@@ -688,6 +670,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             else {
                 Log.d("onPostExecute","without Polylines drawn");
             }
+        }
+    }
+
+    private class DisplayNearStops extends  AsyncTask<Location, Void, StopWrapperList> {
+
+        private DatabaseReference stopReference;
+
+        @Override
+        protected StopWrapperList doInBackground(Location... locations) {
+
+            final StopWrapperList stopWrapperList = new StopWrapperList();
+
+            stopReference = firebaseHelper.getStopReference();
+
+            final Location location = locations[0];
+
+            stopReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    ArrayList<Stop> stops = new ArrayList<Stop>();
+
+                    for (DataSnapshot stop: dataSnapshot.getChildren()) {
+                        Stop retrievedStop = stop.getValue(Stop.class);
+                        Log.i("retrieved stop", retrievedStop.getKey());
+
+                        stops.add(retrievedStop);
+                    }
+
+                    initMarkersAndCircles(stops);
+
+                    for (int i = 0; i < stops.size(); i++) {
+                        Location locationOfStop = new Location("null");
+                        locationOfStop.setLatitude(stops.get(i).getLatitude());
+                        locationOfStop.setLongitude(stops.get(i).getLongitude());
+
+                        if (location.distanceTo(locationOfStop) <= NEARBY_METERS) {
+                            stopWrappers.add(addStopToMap(stops.get(i),mMap));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            return null;
         }
     }
 }
