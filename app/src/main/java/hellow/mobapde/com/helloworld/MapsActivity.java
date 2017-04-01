@@ -60,6 +60,8 @@ import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
+import hellow.mobapde.com.helloworld.Settings.CircleSettings;
+import hellow.mobapde.com.helloworld.Settings.MarkerSettings;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapper;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapperList;
 import hellow.mobapde.com.helloworld.Wrapper.StopWrapper;
@@ -282,8 +284,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(targetLoc)
-                .zoom(17) // TODO optimize to see all points (including your position)
-                .bearing(20) // TODO optimize to see all points (including your position)
+                .zoom(17)
+                .bearing(20)
                 .tilt(0)
                 .build();
 
@@ -334,6 +336,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private StopWrapper addStopToMap(Stop stop, GoogleMap map) {
+
+        for (int i = 0; i < stopWrappers.size(); i++) {
+
+            Stop currentStop = stopWrappers.get(i).getStop();
+
+            if ( (currentStop.getLatLng().latitude == stop.getLatLng().latitude) &&
+                    (currentStop.getLatLng().longitude == stop.getLatLng().longitude))
+                return null;
+        }
+
         Marker marker = map.addMarker(stop.getMarkerOptions());
         Circle circle = map.addCircle(stop.getCircleOptions());
 
@@ -387,7 +399,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i("Location", "changed");
+        Log.i("Location", "Changed");
+        currentLocation = location;
 
         moveCameraToLocation(location, mMap);
 
@@ -395,16 +408,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
 
-        currentLocation = location;
+        if (currentAdventureKey == null) {
+            DisplayNearStops displayNearStops = new DisplayNearStops();
 
-        StopWrapper activeStopWrapper = locationIsInStopWrapper(location, stopWrappers);
-
-        if (activeStopWrapper != null) {
-            activeStopWrapper.getMarker().setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-            Log.i("Stop Detected", activeStopWrapper.getStop().getDescription());
+            displayNearStops.execute(currentLocation);
         } else {
-            Log.i("Stop Detected", "none");
+            StopWrapper nearbyStopWrapper = locationIsInStopWrapper(location, stopWrappers);
+
+            if (nearbyStopWrapper != null) {
+                nearbyStopWrapper.getMarker().setIcon(MarkerSettings.getInactivePin());
+
+                Log.i("Stop Detected", nearbyStopWrapper.getStop().getDescription());
+            } else {
+                Log.i("Stop Detected", "none");
+            }
         }
 
         if (targetStop != null) {
@@ -434,12 +451,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Start downloading json data from Google Directions API
             fetchUrl.execute(pathWrapperForURL);
         }
-
-        if (currentAdventureKey.isEmpty()) {
-            DisplayNearStops displayNearStops = new DisplayNearStops();
-
-            displayNearStops.execute(currentLocation);
-        }
     }
 
     private void initMarkersAndCircles (Adventure adventure) {
@@ -453,12 +464,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             stop.setMarkerOptions(new MarkerOptions()
                     .position(stop.getLatLng())
-                    .title(stop.getDescription()));
+                    .title(stop.getDescription())
+                    .icon(MarkerSettings.getActivePin()));
 
             stop.setCircleOptions(new CircleOptions()
                     .center(stop.getLatLng())
-                    .fillColor(0x66888888)
-                    .strokeColor(Color.DKGRAY)
+                    .fillColor(CircleSettings.getFillColor())
+                    .strokeColor(CircleSettings.getStrokeColor())
                     .radius(20));
         }
     }
@@ -470,12 +482,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             stop.setMarkerOptions(new MarkerOptions()
                     .position(stop.getLatLng())
-                    .title(stop.getDescription()));
+                    .title(stop.getDescription())
+                    .icon(MarkerSettings.getActivePin()));
 
             stop.setCircleOptions(new CircleOptions()
                     .center(stop.getLatLng())
-                    .fillColor(0x66888888)
-                    .strokeColor(Color.DKGRAY)
+                    .fillColor(CircleSettings.getFillColor())
+                    .strokeColor(CircleSettings.getStrokeColor())
                     .radius(20));
         }
     }

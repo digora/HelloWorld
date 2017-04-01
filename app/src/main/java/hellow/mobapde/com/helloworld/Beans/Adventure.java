@@ -39,12 +39,9 @@ public class Adventure {
     /* For temporary data */
 
     public Adventure() {
-<<<<<<<<< Temporary merge branch 1
         this.status = "Not Started";
 
         stops = new LinkedHashMap<>();
-=========
->>>>>>>>> Temporary merge branch 2
     }
 
     public Adventure(String name, String details) {
