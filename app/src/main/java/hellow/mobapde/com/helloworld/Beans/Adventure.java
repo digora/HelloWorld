@@ -1,13 +1,11 @@
 package hellow.mobapde.com.helloworld.Beans;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,7 +19,7 @@ public class Adventure {
     private String details;
 
     @JsonIgnore
-    private boolean status;
+    private String status;
     @JsonIgnore
     private String key;
     @JsonIgnore
@@ -41,21 +39,23 @@ public class Adventure {
     /* For temporary data */
 
     public Adventure() {
-        this.status = false;
+<<<<<<<<< Temporary merge branch 1
+        this.status = "Not Started";
 
         stops = new LinkedHashMap<>();
+=========
+>>>>>>>>> Temporary merge branch 2
     }
 
     public Adventure(String name, String details) {
         this.name = name;
         this.details = details;
-        this.status = false;
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
         this.name = name;
         this.details = details;
-        this.status = Boolean.parseBoolean(status);
+        this.status = status;
         this.picture = picture;
     }
 
@@ -99,12 +99,12 @@ public class Adventure {
         this.details = details;
     }
 
-    public boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
-        this.status = Boolean.parseBoolean(status);
+        this.status = status;
     }
 
     public Stop getStop (String key) {
@@ -122,5 +122,4 @@ public class Adventure {
     public LatLng getLatLngOfStop (String key) {
         return stops.get(key).getLatLng();
     }
-
 }

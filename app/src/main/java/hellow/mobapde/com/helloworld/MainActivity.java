@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int MY_PERMISSION_MAP_GRANTED = 1;
     Button btnStart;
+    private FirebaseHelper firebaseHelper = new FirebaseHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        System.out.println("Number of adventures from firebase: " + firebaseHelper.getAdventures().size());
 
     }
 

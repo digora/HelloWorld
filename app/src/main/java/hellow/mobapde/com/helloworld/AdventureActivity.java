@@ -23,6 +23,8 @@ import hellow.mobapde.com.helloworld.Beans.Adventure;
 
 public class AdventureActivity extends AppCompatActivity {
 
+
+    /*Testes*/
     ViewPager vpFeaturedList;
     CustomSwipeAdapter customSwipeAdapter;
     RecyclerView rvLatestList;

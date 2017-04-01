@@ -19,6 +19,7 @@
         android:orientation="vertical"
         android:padding="6dp"
         android:layout_weight="1"
+        android:background="#F5F5F5"
         android:id="@+id/ll_catalog_container">
 
         <LinearLayout
@@ -30,21 +31,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="12dp"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="Closest Adventures"/>
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:textColor="#000"
+                    android:gravity="left"
+                    android:text="CLOSEST ADVENTURES"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
                     android:id="@+id/tv_more_closest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
                     android:text="MORE"
-                    android:textColor="#0000FF"/>
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -59,27 +66,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+
             android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="12dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="Latest Adventures"/>
+                    android:textSize="16sp"
+                    android:textColor="#000"
+                    android:gravity="left"
+                    android:text="LATEST ADVENTURES"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:gravity="right"
                     android:text="MORE"
-                    android:layout_gravity="right"
-                    android:id="@+id/tv_more_latest"
-                    android:textColor="#0000FF"/>
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
@@ -98,22 +109,25 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="12dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="Top Adventures"/>
+                    android:textSize="16sp"
+                    android:textColor="#000"
+                    android:gravity="left"
+                    android:text="TOP ADVENTURES"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:gravity="right"
                     android:text="MORE"
-                    android:id="@+id/tv_more_top"
-                    android:layout_gravity="end"
-                    android:textColor="#0000FF"/>
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
