@@ -51,8 +51,12 @@ public class FirebaseHelper {
     }
 
 
-    public DatabaseReference getAdReference() {
+    public DatabaseReference getAdventureReference() {
         return firebaseReference.child(AD_PATH);
+    }
+
+    public DatabaseReference getAdventureReference (String key) {
+        return firebaseReference.child(AD_PATH).child(key);
     }
 
     public Map<String, Stop> getStops() {

@@ -1,8 +1,6 @@
 package hellow.mobapde.com.helloworld;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
@@ -19,8 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,11 +25,11 @@ import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
 import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
-import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
 public class AdventureActivity extends AppCompatActivity {
 
+    public static final String ADVENTURE_KEY = "ad_key";
 
     /*Testes*/
     ViewPager vpFeaturedList;
@@ -115,7 +111,7 @@ public class AdventureActivity extends AppCompatActivity {
 
     public void initClosestList(){
 
-        DatabaseReference adventureReference = firebaseHelper.getAdReference();
+        DatabaseReference adventureReference = firebaseHelper.getAdventureReference();
 
         adventureReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -164,8 +160,7 @@ public class AdventureActivity extends AppCompatActivity {
             @Override
             public void onAdventureClick(View view, Adventure a) {
                 Intent adventurePageIntent = new Intent(getBaseContext(), AdventureDetailsActivity.class);
-                adventurePageIntent.putExtra("aName", a.getName());
-                adventurePageIntent.putExtra("aDetails", a.getDetails());
+                adventurePageIntent.putExtra(ADVENTURE_KEY, a.getKey());
 
                 startActivity(adventurePageIntent);
             }

@@ -2,8 +2,6 @@ package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.Path;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -13,7 +11,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,7 +26,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -55,9 +51,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import hellow.mobapde.com.helloworld.Converter.MapToArrayListConverter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
@@ -115,7 +109,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopWrappers = new StopWrapperList();
         pathWrappers = new PathWrapperList();
 
-        //currentAdventureKey = "-Kg7iwO2x-7kwHkgmEbQ"; // HARD CODED
+        currentAdventureKey = getIntent().getStringExtra(AdventureActivity.ADVENTURE_KEY);
+        retrieveCurrentAdventure();
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -141,31 +136,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (currentAdventureKey != null) {
-            adventureReference = firebaseHelper.getAdReference().child(currentAdventureKey);
-
-            adventureReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Adventure adventure = dataSnapshot.getValue(Adventure.class);
-
-                    initMarkersAndCircles(adventure);
-                    setCurrentAdventure(adventure);
-                    addAdventureToMap(adventure, mMap, new PathWrapper(0x66FF0000, 12));
-
-                    onLocationChanged(currentLocation);
-
-                    Log.i("Retrieved Adventure", adventure.getName());
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
     }
 
     public void initListeners(){
@@ -190,6 +160,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(viewAdventureIntent);
             }
         });
+    }
+
+    private void retrieveCurrentAdventure() {
+        if (currentAdventureKey != null) {
+            // TODO retrieve current adventure key from profile
+            adventureReference = firebaseHelper.getAdventureReference().child(currentAdventureKey);
+
+            adventureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Adventure adventure = dataSnapshot.getValue(Adventure.class);
+
+                    Log.i("Retrieved Adventure", adventure.getName());
+
+                    initMarkersAndCircles(adventure);
+                    setCurrentAdventure(adventure);
+                    addAdventureToMap(adventure, mMap);
+
+                    viewAllMarkersInMap(stopWrappers, mMap);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -309,13 +306,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLngBounds bounds = builder.build();
 
-        int padding = 20; // offset from edges of the map in pixels
+        int padding = 200; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         map.moveCamera(cu);
     }
 
-    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapper pathWrapperSettings) {
+    private void addAdventureToMap(Adventure adventure, GoogleMap map) {
 
         ArrayList<Stop> stopsOfAdventure;
 
@@ -425,13 +422,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("Location", "Changed");
         currentLocation = location;
 
-        moveCameraToLocation(location, mMap);
-
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
 
         if (currentAdventureKey == null) {
+            moveCameraToLocation(location, mMap);
+
             DisplayNearStops displayNearStops = new DisplayNearStops();
 
             displayNearStops.execute(currentLocation);
