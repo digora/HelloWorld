@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -78,6 +79,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public final static int NEARBY_METERS = 1000;
 
+    public final static String LOCATION_KEY = "location";
+
     private GoogleMap mMap;
     private FloatingActionButton dashboardButton;
     private Button btnViewAdventures;
@@ -104,6 +107,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        FirebaseApp.initializeApp(getBaseContext());
 
         firebaseHelper = new FirebaseHelper();
 
@@ -179,6 +184,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent viewAdventureIntent = new Intent();
                 viewAdventureIntent.setClass(getBaseContext(), AdventureActivity.class);
+
+                viewAdventureIntent.putExtra(LOCATION_KEY, currentLocation);
 
                 startActivity(viewAdventureIntent);
             }
