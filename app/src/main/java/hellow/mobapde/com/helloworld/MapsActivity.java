@@ -1,9 +1,11 @@
 package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,8 +80,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public final static String LOCATION_KEY = "location";
 
     private GoogleMap mMap;
-    private FloatingActionButton dashboardButton;
-    private Button btnViewAdventures;
+    FloatingActionButton dashboardButton;
+    Button btnViewAdventures;
 
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -98,6 +101,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FirebaseHelper firebaseHelper;
 
+    LinearLayout llAdvStatusContainer;
+    LinearLayout llMarkerClickedContainer;
+
+    Button btnMapsCancel;
+    Button btnMapsGoing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,8 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         currentAdventureKey = getIntent().getStringExtra(AdventureActivity.ADVENTURE_KEY);
 
-        tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -127,10 +134,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         googleApiClient.connect();
 
+        createContentView();
+        initListeners();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        if(sharedPreferences.contains(NoNameActivity.USERNAME)) {
+            //Yay you don't have to go back
+        }else {
+            Intent i = new Intent(getBaseContext(), NoNameActivity.class);
+            startActivity(i);
+            finish();
+        }
+    }
+
+    public void createContentView(){
         dashboardButton = (FloatingActionButton) findViewById(R.id.btn_dashboard);
+
         btnViewAdventures = (Button) findViewById(R.id.btn_view_adventures);
 
-        initListeners();
+        tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
+
+        llAdvStatusContainer = (LinearLayout) findViewById(R.id.ll_adv_status_container);
+
+        llMarkerClickedContainer = (LinearLayout) findViewById(R.id.ll_marker_clicked_container);
+
+        btnMapsCancel = (Button) findViewById(R.id.btn_maps_cancel);
+
+        btnMapsGoing = (Button) findViewById(R.id.btn_maps_going);
     }
 
     @Override
@@ -160,7 +191,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(viewAdventureIntent);
             }
         });
+
+        btnMapsCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llAdvStatusContainer.setVisibility(View.VISIBLE);
+                llMarkerClickedContainer.setVisibility(View.GONE);
+
+                /* Insert code hiding infowindow/deselcting marker here */
+            }
+        });
     }
+
 
     private void retrieveCurrentAdventure() {
         if (currentAdventureKey != null) {
@@ -199,6 +241,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                llAdvStatusContainer.setVisibility(View.GONE);
+                llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
@@ -208,7 +260,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public View getInfoContents(Marker marker) {
 
-                View v = getLayoutInflater().inflate(R.layout.windowlayout, null);
+                View v = getLayoutInflater().inflate(R.layout.info_window, null);
 
                 LatLng latLng = marker.getPosition();
 
@@ -246,6 +298,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Start downloading json data from Google Directions API
                 fetchUrl.execute(pathWrapperForURL);
+
             }
         });
 
@@ -265,8 +318,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng latLng) {
                 Log.i("Clicked on", latLng.toString());
+
+                llAdvStatusContainer.setVisibility(View.VISIBLE);
+                llMarkerClickedContainer.setVisibility(View.GONE);
+
+
             }
         });
+
+
     }
 
     private void moveCameraToStop(Stop stop, GoogleMap map) {

@@ -66,6 +66,8 @@
         <activity
             android:name=".StampPopActivity"
             android:theme="@style/AppTheme.PopUpTheme" />
+        <activity android:name=".NoNameActivity" />
+        <activity android:name=".ViewRelAdvActivity"></activity>
     </application>
 
 </manifest>
