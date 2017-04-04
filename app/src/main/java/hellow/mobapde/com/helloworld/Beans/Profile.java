@@ -16,16 +16,14 @@ public class Profile {
     private String name;
     private String gender;
     private String currAdKey;
-    @JsonIgnore
     private Map<String, String> adventureLog;
-    @Exclude
-    private ArrayList<Stamp> stamps;
+    private Map<String, String> stamps;
 
 
     public Profile() {
     }
 
-    public Profile(String name, ArrayList<Stamp> stamps, String gender) {
+    public Profile(String name, Map<String, String> stamps, String gender) {
         this.name = name;
         this.stamps = stamps;
         this.gender = gender;
@@ -69,11 +67,11 @@ public class Profile {
         this.name = name;
     }
 
-    public ArrayList<Stamp> getStamps() {
+    public Map<String, String> getStamps() {
         return stamps;
     }
 
-    public void setStamps(ArrayList<Stamp> stamps) {
+    public void setStamps(Map<String, String> stamps) {
         this.stamps = stamps;
     }
 

@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -110,7 +111,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pathWrappers = new PathWrapperList();
 
         currentAdventureKey = getIntent().getStringExtra(AdventureActivity.ADVENTURE_KEY);
-        retrieveCurrentAdventure();
 
         tvCurrentAdventureName = (TextView) findViewById(R.id.tv_current_adventure_title);
 
@@ -192,6 +192,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        retrieveCurrentAdventure();
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
@@ -306,8 +308,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLngBounds bounds = builder.build();
 
-        int padding = 200; // offset from edges of the map in pixels
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        int padding = 400; // offset from edges of the map in pixels
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
         map.moveCamera(cu);
     }
@@ -437,6 +445,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (nearbyStopWrapper != null) {
                 nearbyStopWrapper.getMarker().setIcon(MarkerSettings.getInactivePin());
+                nearbyStopWrapper.getCircle().setStrokeColor(0xFFDDDDDD);
 
                 Log.i("Stop Detected", nearbyStopWrapper.getStop().getDescription());
             } else {

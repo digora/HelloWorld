@@ -17,7 +17,9 @@ public class Adventure {
 
     private String name;
     private String details;
-
+    private String date;
+    private int timesStarted;
+    private String difficulty;
     @JsonIgnore
     private String status;
     @JsonIgnore
@@ -44,9 +46,10 @@ public class Adventure {
         stops = new LinkedHashMap<>();
     }
 
-    public Adventure(String name, String details) {
+    public Adventure(String name, String details,String date,String difficulty) {
         this.name = name;
         this.details = details;
+        this.date = date;
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
@@ -54,6 +57,30 @@ public class Adventure {
         this.details = details;
         this.status = status;
         this.picture = picture;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getTimesStarted() {
+        return timesStarted;
+    }
+
+    public void setTimesStarted(int timesStarted) {
+        this.timesStarted = timesStarted;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
     }
 
     public String getKey() {

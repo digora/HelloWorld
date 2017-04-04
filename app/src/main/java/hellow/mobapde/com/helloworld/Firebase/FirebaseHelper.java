@@ -12,6 +12,7 @@ import java.util.Map;
 
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Profile;
+import hellow.mobapde.com.helloworld.Beans.Stamp;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 
 /**
@@ -26,7 +27,7 @@ public class FirebaseHelper {
     public static final String STOP_PATH = "stops";
     public static final String AD_PATH = "adventures";
     public static final String PRO_PATH = "profiles";
-    public static final String NONE = "0";
+    public static final String ST_PATH = "stamps";
     public static final String CUR_AD_KEY = "currAdKey";
     public static final String AD_LOG_KEY = "adventureLog";
 
@@ -50,6 +51,10 @@ public class FirebaseHelper {
         return firebaseReference.child(STOP_PATH);
     }
 
+    public DatabaseReference getStampReference(){
+        return firebaseReference.child(ST_PATH);
+    }
+
 
     public DatabaseReference getAdventureReference() {
         return firebaseReference.child(AD_PATH);
@@ -71,6 +76,13 @@ public class FirebaseHelper {
         this.adventures = adventures;
     }
 
+    public void createStamp(Stamp s){
+        DatabaseReference stampReference = firebaseReference.child(ST_PATH);
+        String key = stampReference.push().getKey();
+
+        s.setKey(key);
+        stampReference.child(key).setValue(s);
+    }
     public void createAdventure(Adventure a){
         DatabaseReference adReference = firebaseReference.child(AD_PATH);
         String key = adReference.push().getKey();

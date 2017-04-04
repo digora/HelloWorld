@@ -133,7 +133,7 @@ public class AdventureActivity extends AppCompatActivity {
 
                     String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
 
-                    for (int j = 0; i < currentAdventure.getNumberOfStops(); j++) {
+                    for (int j = 0; j < currentAdventure.getNumberOfStops(); j++) {
                         Location locationOfStop = new Location("null");
                         locationOfStop.setLatitude(currentAdventure.getStop(keys[j]).getLatitude());
                         locationOfStop.setLongitude(currentAdventure.getStop(keys[j]).getLongitude());
