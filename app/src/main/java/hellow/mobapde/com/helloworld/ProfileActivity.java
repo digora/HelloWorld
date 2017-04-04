@@ -1,8 +1,10 @@
 package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import hellow.mobapde.com.helloworld.Adapters.AdventureAdapter;
@@ -41,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     FloatingActionButton fBtnVaStamps;
     FloatingActionButton fBtnVaAdventures;
 
+    TextView tvAdventurerName;
     Button btnProfileBack;
 
     @Override
@@ -71,6 +76,13 @@ public class ProfileActivity extends AppCompatActivity {
     private void createContentView(){
 
         Log.d(TAG, "Creating content view");
+
+        tvAdventurerName = (TextView) findViewById(R.id.tv_adventurer_name);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        tvAdventurerName.setText(sharedPreferences.getString(NoNameActivity.USERNAME, "JuanDefault"));
+
 
         btnProfileBack = (Button) findViewById(R.id.btn_profile_back);
 

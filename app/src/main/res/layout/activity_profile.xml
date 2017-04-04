@@ -58,7 +58,7 @@
                 android:id="@+id/tv_adventurer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Juan Dela Cruz"
+                android:text="@string/ph_user_name"
                 android:fontFamily="sans-serif-light"
                 android:textColor="#FFF"
                 android:textSize="28sp" />

@@ -45,6 +45,16 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:background="@color/darkMetal"
+            android:text="Cancel"
+            android:textColor="@color/fontColor" />
+
+        <Button
             android:id="@+id/btn_go"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,15 +65,7 @@
             android:textColor="@color/fontColor"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:layout_weight="1"
-            android:background="@color/darkMetal"
-            android:text="Cancel"
-            android:textColor="@color/fontColor" />
+
 
 
     </LinearLayout>
