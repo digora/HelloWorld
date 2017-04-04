@@ -55,7 +55,6 @@ public class FirebaseHelper {
         return firebaseReference.child(ST_PATH);
     }
 
-
     public DatabaseReference getAdventureReference() {
         return firebaseReference.child(AD_PATH);
     }
@@ -83,12 +82,14 @@ public class FirebaseHelper {
         s.setKey(key);
         stampReference.child(key).setValue(s);
     }
+
     public void createAdventure(Adventure a){
         DatabaseReference adReference = firebaseReference.child(AD_PATH);
         String key = adReference.push().getKey();
         a.setKey(key);
         adReference.child(key).setValue(a);
     }
+
     public void updateProfilesAdventure(final String profileKey){
         firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -107,20 +108,28 @@ public class FirebaseHelper {
             }
         });
     }
+
     public void updateProfilesCurrAdventure(final String profileKey, String adventureKey){
         firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(adventureKey);
 
     }
+
     public void createStop(Stop s){
         DatabaseReference stopReference = firebaseReference.child(STOP_PATH);
         String key = stopReference.push().getKey();
         s.setKey(key);
         stopReference.child(key).setValue(s);
     }
+
     public void createProfile(Profile p){
         DatabaseReference profileReference = firebaseReference.child(PRO_PATH);
         String key = profileReference.push().getKey();
         p.setKey(key);
         profileReference.child(key).setValue(p);
     }
+
+    public void cancelCurrentAdventure(final String profileKey){
+        firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(null);
+    }
+
 }
