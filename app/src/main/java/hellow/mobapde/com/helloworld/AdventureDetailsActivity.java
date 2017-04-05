@@ -3,6 +3,8 @@ package hellow.mobapde.com.helloworld;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,61 +19,24 @@ public class AdventureDetailsActivity extends AppCompatActivity {
     Button btnCancel;
     TextView tvAdventureViewedTitle;
     TextView tvAdventureViewedDetails;
-    ImageView ivAdventureViewedPicture;
+    //ImageView ivAdventureViewedPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adventure_details);
 
-        createContentView();
+        createMapFragment();
+
+
     }
 
-    private void createContentView(){
-
-        Intent collectIntent = getIntent();
-
-        btnGo = (Button) findViewById(R.id.btn_go);
-        btnGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Intent mapIntent = new Intent(getBaseContext(), MapsActivity.class);
-                startActivity(mapIntent);*/
-                finish();
-            }
-        });
-
-        btnCancel = (Button) findViewById(R.id.btn_cancel);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-        /* Hello */
-
-        tvAdventureViewedTitle = (TextView) findViewById(R.id.tv_adventure_viewed_title);
-        tvAdventureViewedTitle.setText(collectIntent.getStringExtra("aName"));
-
-        tvAdventureViewedDetails = (TextView) findViewById(R.id.tv_adventure_viewed_details);
-        tvAdventureViewedDetails.setText(collectIntent.getStringExtra("aDetails"));
-
-        ivAdventureViewedPicture = (ImageView) findViewById(R.id.iv_adventure_viewed_picture);
-        ivAdventureViewedPicture.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.app_icon));
-
-        /*Bitmap bmp = null;
-        String filename = collectIntent.getStringExtra("aPicture");
-        try{
-            FileInputStream fis = openFileInput(filename);
-            bmp = BitmapFactory.decodeStream(fis);
-            fis.close();
-
-            ivAdventureViewedPicture.setImageBitmap(bmp);
-        }catch(Exception e){
-            e.printStackTrace();
-        }*/
-
+    private void createMapFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.map_container, new MapDetailsFragment());
+        fragmentTransaction.commit();
     }
+
+
 }

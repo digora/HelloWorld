@@ -56,7 +56,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".AdventureActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ActionBar"/>
         <activity
             android:name=".AdventureDetailsActivity"
             android:screenOrientation="portrait" />
