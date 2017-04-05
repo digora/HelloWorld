@@ -63,4 +63,40 @@ public class StopWrapperList {
     public boolean removeMarkerAndCircleOfAssociatedStop (Stop stop) {
         return removeMarkerOfAssociatedStop(stop) && removeCircleOfAssociatedStop(stop);
     }
+
+    public boolean hideInfoWindowOf (Stop stop) {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (stopWrappers.get(i).isAssociated(stop)) {
+                stopWrappers.get(i).hideInfoWindow();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void hideAllInfoWindows () {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            stopWrappers.get(i).hideInfoWindow();
+        }
+    }
+
+    public boolean showInfoWindowOf (Stop stop) {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (stopWrappers.get(i).isAssociated(stop)) {
+                stopWrappers.get(i).showInfoWindow();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void showAllInfoWindows () {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            stopWrappers.get(i).showInfoWindow();
+        }
+    }
 }

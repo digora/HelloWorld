@@ -71,4 +71,12 @@ public class StopWrapper {
         removeMarkerFromMap();
         removeCircleFromMap();
     }
+
+    public void hideInfoWindow () {
+        marker.hideInfoWindow();
+    }
+
+    public void showInfoWindow () {
+        marker.showInfoWindow();
+    }
 }

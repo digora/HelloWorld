@@ -198,7 +198,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 llAdvStatusContainer.setVisibility(View.VISIBLE);
                 llMarkerClickedContainer.setVisibility(View.GONE);
 
-                /* Insert code hiding infowindow/deselcting marker here */
+                targetStop = null;
+
+                stopWrappers.hideAllInfoWindows();
+
+                if (currentPathWrapper != null)
+                    currentPathWrapper.removePolyline();
             }
         });
     }
@@ -245,8 +250,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                llAdvStatusContainer.setVisibility(View.GONE);
-                llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                if (currentAdventureKey == null) {
+                    llAdvStatusContainer.setVisibility(View.GONE);
+                    llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                }
 
                 for (int i = 0; i < stopWrappers.size(); i++) {
                     Stop currentStop = stopWrappers.get(i).getStop();
@@ -332,6 +339,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 llAdvStatusContainer.setVisibility(View.VISIBLE);
                 llMarkerClickedContainer.setVisibility(View.GONE);
+
+                currentPathWrapper.removePolyline();
 
                 targetStop = null;
             }
@@ -781,7 +790,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Drawing polyline in the Google Map for the i-th route
             if(lineOptions != null) {
-                result.setPolyline(mMap.addPolyline(lineOptions));
+                if (targetStop != null)
+                    result.setPolyline(mMap.addPolyline(lineOptions));
             }
             else {
                 Log.d("onPostExecute","without Polylines drawn");
