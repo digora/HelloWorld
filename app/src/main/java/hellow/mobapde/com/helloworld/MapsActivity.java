@@ -75,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationListener {
 
     public final static int NEARBY_METERS = 1000;
+    public final static int ADVENTURE_SELECTED = 0;
 
     private GoogleMap mMap;
     FloatingActionButton dashboardButton;
@@ -101,7 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LinearLayout llAdvStatusContainer;
     LinearLayout llMarkerClickedContainer;
 
-    Button btnMapsCancel;
     Button btnMapsGoing;
 
     @Override
@@ -155,8 +155,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         llAdvStatusContainer = (LinearLayout) findViewById(R.id.ll_adv_status_container);
 
         llMarkerClickedContainer = (LinearLayout) findViewById(R.id.ll_marker_clicked_container);
-
-        btnMapsCancel = (Button) findViewById(R.id.btn_maps_cancel);
 
         btnMapsGoing = (Button) findViewById(R.id.btn_maps_going);
     }
@@ -212,15 +210,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        btnMapsCancel.setOnClickListener(new View.OnClickListener() {
+        btnMapsGoing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                llAdvStatusContainer.setVisibility(View.VISIBLE);
-                llMarkerClickedContainer.setVisibility(View.GONE);
-
-                /* Insert code hiding infowindow/deselcting marker here */
+                if(ADVENTURE_SELECTED == 0){
+                    Toast.makeText(getBaseContext(), "No adventure selected.", Toast.LENGTH_LONG).show();
+                }else{
+                    /* Start adventure */
+                }
             }
         });
+
     }
 
 
@@ -236,7 +236,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                llAdvStatusContainer.setVisibility(View.GONE);
+                dashboardButton.setVisibility(View.GONE);
                 llMarkerClickedContainer.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -310,7 +310,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 Log.i("Clicked on", latLng.toString());
 
-                llAdvStatusContainer.setVisibility(View.VISIBLE);
                 llMarkerClickedContainer.setVisibility(View.GONE);
 
 

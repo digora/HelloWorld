@@ -15,6 +15,7 @@
         android:textSize="32dp"
         android:id="@+id/tv_adventure_viewed_title"
         android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
         android:fontFamily="sans-serif-light"
         android:text="7/11 Adventure"/>
 
@@ -31,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
         android:scrollbars="vertical"
         android:maxLines="9"
         android:layout_weight="1"

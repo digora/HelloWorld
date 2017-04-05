@@ -24,60 +24,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
+        android:clipToPadding="true"
+        android:layout_alignParentBottom="true"
         android:id="@+id/ll_marker_clicked_container"
-        android:background="#FFF"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp">
+        android:background="#FFF">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="View adventures with this stop"
-            android:background="@null"
-            android:textSize="18sp"
-            android:textColor="@color/profileFontColor"
+            android:text="Select an adventure with this stop"
+            android:background="#FFF"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/btn_view_rel_adventures"
             android:padding="12dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
+            android:elevation="6dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="12dp"
             android:layout_gravity="center"/>
 
-
-        <LinearLayout
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="6dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/btn_maps_cancel"
-                android:background="@null"
-                android:textColor="#808080"
-                android:layout_marginLeft="6dp"
-                android:text="CANCEL"/>
-
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/btn_maps_going"
-                android:background="@null"
-                android:textColor="#808080"
-                android:text="GO!"
-                />
-
-
-        </LinearLayout>
-
-
-
-
+            android:id="@+id/btn_maps_going"
+            android:layout_margin="6dp"
+            android:background="@color/darkMetal"
+            android:textColor="@color/fontColor"
+            android:text="GO!" />
 
     </LinearLayout>
 
