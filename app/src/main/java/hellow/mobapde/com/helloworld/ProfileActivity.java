@@ -36,6 +36,7 @@ import hellow.mobapde.com.helloworld.Adapters.StampAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Profile;
 import hellow.mobapde.com.helloworld.Beans.Stamp;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -46,7 +47,12 @@ public class ProfileActivity extends AppCompatActivity {
     FloatingActionButton fBtnVaAdventures;
 
     TextView tvAdventurerName;
+    TextView tvNumAdvCompleted;
+    TextView tvNumStamps;
+
     Button btnProfileBack;
+
+    FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
         //setTitle("Profile");
 
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        firebaseHelper = new FirebaseHelper();
 
         createContentView();
 
@@ -78,16 +86,50 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "Creating content view");
 
         tvAdventurerName = (TextView) findViewById(R.id.tv_adventurer_name);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        tvAdventurerName.setText(sharedPreferences.getString(NoNameActivity.USERNAME, "JuanDefault"));
-
+        tvNumAdvCompleted = (TextView) findViewById(R.id.tv_number_adv_completed);
+        tvNumStamps = (TextView) findViewById(R.id.tv_number_stamps);
 
         btnProfileBack = (Button) findViewById(R.id.btn_profile_back);
 
         fBtnVaStamps = (FloatingActionButton) findViewById(R.id.fbtn_va_stamps);
         fBtnVaAdventures = (FloatingActionButton) findViewById(R.id.fbtn_va_adventures);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String userKey =  sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
+        String username =  sharedPreferences.getString(NoNameActivity.USERNAME, "null");
+
+        tvAdventurerName.setText(username);
+
+        Log.i("current key", userKey);
+
+        DatabaseReference profileReference = firebaseHelper.getProfileReference(userKey);
+        profileReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Profile retrievedProfile = dataSnapshot.getValue(Profile.class);
+
+                tvAdventurerName.setText(retrievedProfile.getName());
+
+                if (retrievedProfile.getAdventureLog() == null)
+                    tvNumAdvCompleted.setText("0");
+                else {
+                    tvNumAdvCompleted.setText(retrievedProfile.getAdventureLog().size() + "");
+                }
+
+                if (retrievedProfile.getStamps() == null)
+                    tvNumStamps.setText("0");
+                else {
+                    tvNumStamps.setText(retrievedProfile.getStamps().size() + "");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //tvAdventurerName.setText(sharedPreferences.getString(NoNameActivity.USERNAME, "JuanDefault"));
 
         initListeners();
 

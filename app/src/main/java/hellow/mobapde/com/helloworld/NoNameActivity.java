@@ -9,12 +9,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import hellow.mobapde.com.helloworld.Beans.Profile;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
+
 public class NoNameActivity extends AppCompatActivity {
 
     Button btnFinish;
     EditText etAdvName;
 
     public static final String USERNAME = "username";
+    public static final String USER_KEY = "userkey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +46,17 @@ public class NoNameActivity extends AppCompatActivity {
                     name = etAdvName.getText().toString();
                 }
 
+                Map<String, String> adventureLog = new LinkedHashMap<String, String>();
+
+                Profile p = new Profile(name, "Male", adventureLog);
+                FirebaseHelper firebaseHelper = new FirebaseHelper();
+
+                String newUserKey = firebaseHelper.createProfile(p);
+
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(USERNAME, name);
+                editor.putString(USER_KEY, newUserKey);
                 editor.commit();
 
                 Intent nameCreatedIntent = new Intent(getBaseContext(), MapsActivity.class);

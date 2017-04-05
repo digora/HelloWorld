@@ -139,7 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        if(sharedPreferences.contains(NoNameActivity.USERNAME)) {
+        if(sharedPreferences.contains(NoNameActivity.USER_KEY)) {
             //Yay you don't have to go back
         }else {
             Intent i = new Intent(getBaseContext(), NoNameActivity.class);
@@ -247,30 +247,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 llAdvStatusContainer.setVisibility(View.GONE);
                 llMarkerClickedContainer.setVisibility(View.VISIBLE);
-                return false;
-            }
-        });
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
+                for (int i = 0; i < stopWrappers.size(); i++) {
+                    Stop currentStop = stopWrappers.get(i).getStop();
 
-            @Override
-            public View getInfoContents(Marker marker) {
-
-                View v = getLayoutInflater().inflate(R.layout.info_window, null);
-
-                LatLng latLng = marker.getPosition();
-
-                return v;
-            }
-        });
-
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
+                    if ( (currentStop.getLatLng().latitude == marker.getPosition().latitude) &&
+                            (currentStop.getLatLng().longitude == marker.getPosition().longitude) )
+                        targetStop = currentStop;
+                }
 
                 LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
                         currentLocation.getLongitude());
@@ -299,6 +283,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Start downloading json data from Google Directions API
                 fetchUrl.execute(pathWrapperForURL);
 
+                return false;
+            }
+        });
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
+                LatLng latLng = marker.getPosition();
+
+                return v;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+
+                //nocontent
+
             }
         });
 
@@ -322,7 +333,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 llAdvStatusContainer.setVisibility(View.VISIBLE);
                 llMarkerClickedContainer.setVisibility(View.GONE);
 
-
+                targetStop = null;
             }
         });
 
@@ -506,6 +517,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (nearbyStopWrapper != null) {
                 nearbyStopWrapper.getMarker().setIcon(MarkerSettings.getInactivePin());
                 nearbyStopWrapper.getCircle().setStrokeColor(0xFFDDDDDD);
+
+
 
                 Log.i("Stop Detected", nearbyStopWrapper.getStop().getDescription());
             } else {

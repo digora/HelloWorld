@@ -63,6 +63,14 @@ public class FirebaseHelper {
         return firebaseReference.child(AD_PATH).child(key);
     }
 
+    public DatabaseReference getProfileReference (String key ){
+        return firebaseReference.child(PRO_PATH).child(key);
+    }
+
+    public DatabaseReference getCurrAdvOfProfileReference (String profileKey) {
+        return getProfileReference(profileKey).child(CUR_AD_KEY);
+    }
+
     public Map<String, Stop> getStops() {
         return stops;
     }
@@ -121,11 +129,13 @@ public class FirebaseHelper {
         stopReference.child(key).setValue(s);
     }
 
-    public void createProfile(Profile p){
+    public String createProfile(Profile p){
         DatabaseReference profileReference = firebaseReference.child(PRO_PATH);
         String key = profileReference.push().getKey();
         p.setKey(key);
         profileReference.child(key).setValue(p);
+
+        return key;
     }
 
     public void cancelCurrentAdventure(final String profileKey){
