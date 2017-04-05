@@ -111,7 +111,7 @@
                 android:id="@+id/tv_current_adventure_title"
                 android:textColor="#000"
                 android:textSize="24sp"
-                android:text="No Current Adventure"/>
+                android:text="Retrieving Current Adventure..."/>
 
         </LinearLayout>
 

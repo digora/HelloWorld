@@ -1,7 +1,9 @@
 package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -52,6 +54,11 @@ public class AdventureDetailsActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 intent.putExtra(AdventureActivity.ADVENTURE_KEY, selectedAdventureKey);
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String userKey =  sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
+
+                firebaseHelper.updateProfilesCurrAdventure(userKey, selectedAdventureKey);
 
                 startActivity(intent);
             }

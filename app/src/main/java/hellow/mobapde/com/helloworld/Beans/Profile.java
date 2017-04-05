@@ -17,6 +17,7 @@ public class Profile {
     private String gender;
     private String currAdKey;
     private Map<String, String> adventureLog;
+    private Map<String, String> visitedStops;
     private Map<String, String> stamps;
 
 
@@ -41,6 +42,14 @@ public class Profile {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public Map<String, String> getVisitedStops() {
+        return visitedStops;
+    }
+
+    public void setVisitedStops(Map<String, String> visitedStops) {
+        this.visitedStops = visitedStops;
     }
 
     public Map<String, String> getAdventureLog() {

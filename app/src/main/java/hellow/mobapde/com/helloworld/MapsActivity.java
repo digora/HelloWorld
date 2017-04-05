@@ -3,6 +3,7 @@ package hellow.mobapde.com.helloworld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -107,12 +109,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnMapsCancel;
     Button btnMapsGoing;
 
+    SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
         FirebaseApp.initializeApp(getBaseContext());
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         firebaseHelper = new FirebaseHelper();
 
@@ -136,8 +142,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         createContentView();
         initListeners();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         if(sharedPreferences.contains(NoNameActivity.USER_KEY)) {
             //Yay you don't have to go back
@@ -210,22 +214,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void retrieveCurrentAdventure() {
-        if (currentAdventureKey != null) {
-            // TODO retrieve current adventure key from profile
-            adventureReference = firebaseHelper.getAdventureReference().child(currentAdventureKey);
+            String userKey = sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
 
-            adventureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            DatabaseReference currentAdventureKeyRef = firebaseHelper.getCurrAdvOfProfileReference(userKey);
+
+            currentAdventureKeyRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Adventure adventure = dataSnapshot.getValue(Adventure.class);
+                    String adventureKey = dataSnapshot.getValue(String.class);
 
-                    Log.i("Retrieved Adventure", adventure.getName());
+                    if (adventureKey != null) {
 
-                    initMarkersAndCircles(adventure);
-                    setCurrentAdventure(adventure);
-                    addAdventureToMap(adventure, mMap);
+                        Log.i("retrieved Curr Ad", adventureKey);
 
-                    viewAllMarkersInMap(stopWrappers, mMap);
+                        DatabaseReference currentAdventureRef = firebaseHelper.getAdventureReference(adventureKey);
+
+                        currentAdventureRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Adventure adventure = dataSnapshot.getValue(Adventure.class);
+
+                                Log.i("Retrieved Adventure", adventure.getName());
+
+                                mMap.clear();
+                                stopWrappers = new StopWrapperList();
+
+                                setCurrentAdventure(adventure);
+                                addAdventureToMap(adventure, mMap);
+
+                                viewAllMarkersInMap(stopWrappers, mMap);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    } else {
+                        setCurrentAdventure(null);
+                    }
                 }
 
                 @Override
@@ -233,7 +260,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
             });
-        }
     }
 
     @Override
@@ -397,23 +423,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-        map.moveCamera(cu);
+        map.animateCamera(cu);
     }
 
     private void addAdventureToMap(Adventure adventure, GoogleMap map) {
 
-        ArrayList<Stop> stopsOfAdventure;
+        initMarkersAndCircles(adventure);
 
-        stopsOfAdventure = MapToArrayListConverter.convertMapToStopArray(adventure.getStops());
+        Object[] objects = adventure.getStops().keySet().toArray();
 
-        for (int i = 0; i < stopsOfAdventure.size(); i++) {
-            stopWrappers.add(addStopToMap(stopsOfAdventure.get(i), map));
+        String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
+
+        for (int i = 0; i < adventure.getNumberOfStops(); i++) {
+            stopWrappers.add(addStopToMap(adventure.getStop(keys[i]), map));
         }
     }
 
     private void removeAdventureFromMap(Adventure adventure, GoogleMap map) {
-
-        // used for cancelling adventures
 
         for (int i = 0; i < stopWrappers.size(); i++) {
             if (adventure.getKey().equals(stopWrappers.get(i).getAdventureKey())) {
@@ -445,7 +471,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private StopWrapper addStopToMap(Stop stop, GoogleMap map) {
 
-        for (int i = 0; i < stopWrappers.size(); i++) {
+        for (int i = 0; i < stopWrappers.size(); i++) { // to prevent multiple
 
             Stop currentStop = stopWrappers.get(i).getStop();
 
@@ -482,9 +508,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void setCurrentAdventure(Adventure adventure) {
-        currentAdventureKey = adventure.getKey();
+        if (adventure != null) {
+            currentAdventureKey = adventure.getKey();
 
-        tvCurrentAdventureName.setText(adventure.getName());
+            tvCurrentAdventureName.setText(adventure.getName());
+            tvCurrentAdventureName.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
+        } else {
+            tvCurrentAdventureName.setText("No Current Adventure");
+        }
     }
 
     public String getCurrentAdventureKey() {
