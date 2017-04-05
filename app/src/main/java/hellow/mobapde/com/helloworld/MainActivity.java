@@ -3,7 +3,9 @@ package hellow.mobapde.com.helloworld;
 import android.*;
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -46,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        if(sharedPreferences.contains(NoNameActivity.USER_KEY)) {
+            Intent i = new Intent(getBaseContext(), MapsActivity.class);
+            startActivity(i);
+            finish();
+        }
 
     }
 
