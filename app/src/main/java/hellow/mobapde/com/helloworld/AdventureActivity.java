@@ -1,8 +1,6 @@
 package hellow.mobapde.com.helloworld;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import hellow.mobapde.com.helloworld.Adapters.ClosestAdventureAdapter;
+import hellow.mobapde.com.helloworld.Adapters.NearbyAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
 import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
@@ -35,7 +31,7 @@ public class AdventureActivity extends AppCompatActivity {
     ArrayList<Adventure> topAdventureList;
     ArrayList<Adventure> closestAdventureList;
 
-    ClosestAdventureAdapter closestAdventureAdapter;
+    NearbyAdventureAdapter closestAdventureAdapter;
     LatestAdventureAdapter latestAdventureAdapter;
     TopAdventureAdapter topAdventureAdapter;
 
@@ -94,8 +90,8 @@ public class AdventureActivity extends AppCompatActivity {
     }
 
     public void initClosestList(){
-        closestAdventureAdapter = new ClosestAdventureAdapter(closestAdventureList);
-        closestAdventureAdapter.setOnAdventureClickListener(new ClosestAdventureAdapter.OnAdventureClickListener() {
+        closestAdventureAdapter = new NearbyAdventureAdapter(closestAdventureList);
+        closestAdventureAdapter.setOnAdventureClickListener(new NearbyAdventureAdapter.OnAdventureClickListener() {
             @Override
             public void onAdventureClick(View view, Adventure a) {
                 Intent adventurePageIntent = new Intent(getBaseContext(), AdventureDetailsActivity.class);

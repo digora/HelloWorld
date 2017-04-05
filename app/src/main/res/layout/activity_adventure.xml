@@ -41,7 +41,7 @@
                     android:textSize="16sp"
                     android:textColor="#000"
                     android:gravity="left"
-                    android:text="CLOSEST ADVENTURES"/>
+                    android:text="NEARBY ADVENTURES"/>
 
                 <TextView
                     android:id="@+id/tv_more_closest"

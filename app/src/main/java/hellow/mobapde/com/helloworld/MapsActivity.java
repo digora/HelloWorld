@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -75,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationListener {
 
     public final static int NEARBY_METERS = 1000;
-    public final static int ADVENTURE_SELECTED = 0;
+    public final static int SELECT_ADVENTURE = 0;
 
     private GoogleMap mMap;
     FloatingActionButton dashboardButton;
@@ -103,6 +105,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LinearLayout llMarkerClickedContainer;
 
     Button btnMapsGoing;
+    Button btnViewRelAdventures;
+
+    private boolean isAdventureSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +162,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         llMarkerClickedContainer = (LinearLayout) findViewById(R.id.ll_marker_clicked_container);
 
         btnMapsGoing = (Button) findViewById(R.id.btn_maps_going);
+
+        btnViewRelAdventures = (Button) findViewById(R.id.btn_view_rel_adventures);
     }
 
     @Override
@@ -213,16 +220,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnMapsGoing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ADVENTURE_SELECTED == 0){
+                if(!isAdventureSelected){
                     Toast.makeText(getBaseContext(), "No adventure selected.", Toast.LENGTH_LONG).show();
                 }else{
                     /* Start adventure */
+                    Toast.makeText(getBaseContext(), "Adventure selected", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        btnViewRelAdventures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent viewRelIntent = new Intent(getBaseContext(), ViewRelAdvPopActivity.class);
+                startActivityForResult(viewRelIntent, SELECT_ADVENTURE);
             }
         });
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == SELECT_ADVENTURE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                Boolean wasSomethingSelected = data.getBooleanExtra("selected", false);
+
+                if(wasSomethingSelected){
+                    btnMapsGoing.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                    btnMapsGoing.setElevation(6.0f);
+
+                    btnViewRelAdventures.setBackgroundColor(getResources().getColor(R.color.darkMetal));
+                    btnViewRelAdventures.setElevation(0.0f);
+
+                    isAdventureSelected = true;
+                }
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
