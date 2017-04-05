@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -21,8 +22,8 @@ public class AdventureActivity extends AppCompatActivity {
 
 
     /*Testes*/
-    ViewPager vpFeaturedList;
-    CustomSwipeAdapter customSwipeAdapter;
+    //ViewPager vpFeaturedList;
+    //CustomSwipeAdapter customSwipeAdapter;
     RecyclerView rvLatestList;
     RecyclerView rvTopList;
     RecyclerView rvClosestList;
@@ -35,6 +36,8 @@ public class AdventureActivity extends AppCompatActivity {
     LatestAdventureAdapter latestAdventureAdapter;
     TopAdventureAdapter topAdventureAdapter;
 
+    LinearLayout llCatalogContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,9 @@ public class AdventureActivity extends AppCompatActivity {
     }
 
     private void createContentView(){
-        vpFeaturedList = (ViewPager) findViewById(R.id.vp_featured_list);
+        /*vpFeaturedList = (ViewPager) findViewById(R.id.vp_featured_list);
         customSwipeAdapter = new CustomSwipeAdapter(this);
-        vpFeaturedList.setAdapter(customSwipeAdapter);
+        vpFeaturedList.setAdapter(customSwipeAdapter);*/
 
         initDummyLatestList();
         initDummyTopList();
@@ -76,6 +79,8 @@ public class AdventureActivity extends AppCompatActivity {
                 false
         ));
         initClosestList();
+
+        llCatalogContainer = (LinearLayout) findViewById(R.id.ll_catalog_container);
 
 
     }
@@ -125,6 +130,10 @@ public class AdventureActivity extends AppCompatActivity {
         });
 
         rvClosestList.setAdapter(closestAdventureAdapter);
+
+        rvTopList.setAdapter(closestAdventureAdapter);
+
+        rvLatestList.setAdapter(closestAdventureAdapter);
 
 
 
