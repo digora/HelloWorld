@@ -8,19 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
-import com.google.android.gms.location.LocationListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import hellow.mobapde.com.helloworld.Adapters.ClosestAdventureAdapter;
+import hellow.mobapde.com.helloworld.Adapters.NearbyAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
 import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
@@ -32,8 +28,8 @@ public class AdventureActivity extends AppCompatActivity {
     public static final String ADVENTURE_KEY = "ad_key";
 
     /*Testes*/
-    ViewPager vpFeaturedList;
-    CustomSwipeAdapter customSwipeAdapter;
+    //ViewPager vpFeaturedList;
+    //CustomSwipeAdapter customSwipeAdapter;
     RecyclerView rvLatestList;
     RecyclerView rvTopList;
     RecyclerView rvClosestList;
@@ -42,20 +38,18 @@ public class AdventureActivity extends AppCompatActivity {
     ArrayList<Adventure> topAdventureList;
     ArrayList<Adventure> closestAdventureList;
 
-    ClosestAdventureAdapter closestAdventureAdapter;
+    NearbyAdventureAdapter closestAdventureAdapter;
     LatestAdventureAdapter latestAdventureAdapter;
     TopAdventureAdapter topAdventureAdapter;
 
-    FirebaseHelper firebaseHelper;
-
-    Location currentLocation;
-
-    LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adventure);
+        setTitle("Adventure Catalog");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         firebaseHelper = new FirebaseHelper();
 
@@ -64,10 +58,22 @@ public class AdventureActivity extends AppCompatActivity {
         createContentView();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void createContentView(){
-        vpFeaturedList = (ViewPager) findViewById(R.id.vp_featured_list);
+        /*vpFeaturedList = (ViewPager) findViewById(R.id.vp_featured_list);
         customSwipeAdapter = new CustomSwipeAdapter(this);
-        vpFeaturedList.setAdapter(customSwipeAdapter);
+        vpFeaturedList.setAdapter(customSwipeAdapter);*/
 
         initDummyLatestList();
         initDummyTopList();
@@ -97,6 +103,8 @@ public class AdventureActivity extends AppCompatActivity {
         ));
         initClosestList();
 
+        llCatalogContainer = (LinearLayout) findViewById(R.id.ll_catalog_container);
+
 
     }
 
@@ -110,52 +118,7 @@ public class AdventureActivity extends AppCompatActivity {
     }
 
     public void initClosestList(){
-
-        DatabaseReference adventureReference = firebaseHelper.getAdventureReference();
-
-        adventureReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Adventure> adventures = new ArrayList<Adventure>();
-
-                for (DataSnapshot adventure: dataSnapshot.getChildren()) {
-                    Adventure retrievedStop = adventure.getValue(Adventure.class);
-                    Log.i("retrieved adventure", retrievedStop.getKey());
-
-                    adventures.add(retrievedStop);
-                }
-
-                for (int i = 0; i < adventures.size(); i++) {
-
-                    Adventure currentAdventure = adventures.get(i);
-
-                    Object[] objects = currentAdventure.getStops().keySet().toArray();
-
-                    String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
-
-                    for (int j = 0; j < currentAdventure.getNumberOfStops(); j++) {
-                        Location locationOfStop = new Location("null");
-                        locationOfStop.setLatitude(currentAdventure.getStop(keys[j]).getLatitude());
-                        locationOfStop.setLongitude(currentAdventure.getStop(keys[j]).getLongitude());
-
-                        if (currentLocation.distanceTo(locationOfStop) <= MapsActivity.NEARBY_METERS) {
-                            closestAdventureList.add(currentAdventure);
-                            closestAdventureAdapter.notifyItemInserted(closestAdventureList.size());
-                            break;
-                        }
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         closestAdventureAdapter = new ClosestAdventureAdapter(closestAdventureList);
-
         closestAdventureAdapter.setOnAdventureClickListener(new ClosestAdventureAdapter.OnAdventureClickListener() {
             @Override
             public void onAdventureClick(View view, Adventure a) {
@@ -167,6 +130,8 @@ public class AdventureActivity extends AppCompatActivity {
         });
 
         rvClosestList.setAdapter(closestAdventureAdapter);
+
+
 
     }
 
