@@ -379,18 +379,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationOfStop.setLatitude(marker.getPosition().latitude);
                 locationOfStop.setLongitude(marker.getPosition().longitude);
 
-                tv_distance.setText("Retrieving distance...");
-
                 float distanceFromCurrLoc = currentLocation.distanceTo(locationOfStop);
+
+                Log.i("Distance From Loc", distanceFromCurrLoc + "");
 
                 if (nearbyStopWrapper != null) {
                     if (nearbyStopWrapper.isAssociated(marker)) {
                         tv_distance.setText("You are currently here");
                         tv_distance.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
+
+                        return v;
                     }
-                } else if (distanceFromCurrLoc < 1000.00)
+                }
+
+                if (distanceFromCurrLoc < 1000) {
                     tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "m away");
-                else {
+                } else {
                     distanceFromCurrLoc /= 1000;
                     tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "km away");
                 }
