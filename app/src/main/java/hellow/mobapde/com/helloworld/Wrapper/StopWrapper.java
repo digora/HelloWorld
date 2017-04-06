@@ -1,6 +1,7 @@
 package hellow.mobapde.com.helloworld.Wrapper;
 
 import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import hellow.mobapde.com.helloworld.Beans.Stop;
@@ -57,6 +58,13 @@ public class StopWrapper {
 
     public boolean isAssociated(Stop stop) {
         return this.stop.equals(stop);
+    }
+
+    public boolean isAssociated(Marker marker) {
+        LatLng inputLatLng = marker.getPosition();
+        LatLng thisLatLng = this.stop.getLatLng();
+
+        return (thisLatLng.longitude == inputLatLng.longitude) && (thisLatLng.latitude == inputLatLng.latitude);
     }
 
     public void removeMarkerFromMap () {

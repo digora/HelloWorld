@@ -1,5 +1,7 @@
 package hellow.mobapde.com.helloworld.Wrapper;
 
+import com.google.android.gms.maps.model.Marker;
+
 import java.util.ArrayList;
 
 import hellow.mobapde.com.helloworld.Beans.Stop;
@@ -98,5 +100,32 @@ public class StopWrapperList {
         for (int i = 0; i < stopWrappers.size(); i++) {
             stopWrappers.get(i).showInfoWindow();
         }
+    }
+
+    public Stop getAssociatedStop (Marker marker) {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (stopWrappers.get(i).isAssociated(marker))
+                return stopWrappers.get(i).getStop();
+        }
+
+        return null;
+    }
+
+    public Stop getAssociatedStop (Stop stop) {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (stopWrappers.get(i).isAssociated(stop))
+                return stopWrappers.get(i).getStop();
+        }
+
+        return null;
+    }
+
+    public StopWrapper getAssociatedStopWrapper (Marker marker) {
+        for (int i = 0; i < stopWrappers.size(); i++) {
+            if (stopWrappers.get(i).isAssociated(marker))
+                return stopWrappers.get(i);
+        }
+
+        return null;
     }
 }

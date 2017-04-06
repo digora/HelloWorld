@@ -1,6 +1,7 @@
 package hellow.mobapde.com.helloworld.Wrapper;
 
 import android.graphics.Color;
+import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
@@ -22,6 +23,8 @@ public class PathWrapper {
     public String url;
     public int pathColor; // hex 0xFF000000
     public int lineWidth;
+
+    public String distance;
 
     public List<List<HashMap<String, String>>> routes; // TO BE SET DURING ASYNCTASK
 
@@ -75,5 +78,23 @@ public class PathWrapper {
 
     public void removePolyline() {
         polyline.remove();
+    }
+
+    public float getDistance() {
+        float totalDistance = 0;
+
+        for(int i = 1; i < polyline.getPoints().size(); i++) {
+            Location currLocation = new Location("this");
+            currLocation.setLatitude(polyline.getPoints().get(i).latitude);
+            currLocation.setLongitude(polyline.getPoints().get(i).longitude);
+
+            Location lastLocation = new Location("this");
+            lastLocation.setLatitude(polyline.getPoints().get(i-1).latitude);
+            lastLocation.setLongitude(polyline.getPoints().get(i-1).longitude);
+
+            totalDistance += lastLocation.distanceTo(currLocation);
+        }
+
+        return totalDistance;
     }
 }

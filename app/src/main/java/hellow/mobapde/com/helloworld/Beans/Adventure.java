@@ -15,6 +15,10 @@ import java.util.Map;
 
 public class Adventure {
 
+    public static final String CASUAL_DIFFICULTY = "casual";
+    public static final String INTERMEDIATE_DIFFICULTY = "intermediate";
+    public static final String ADVENTUROUS_DIFFICULTY = "adventurous";
+
     private String name;
     private String details;
     private String date;

@@ -151,10 +151,12 @@ public class AdventureActivity extends AppCompatActivity {
                 ArrayList<Adventure> adventures = new ArrayList<Adventure>();
 
                 for (DataSnapshot adventure: dataSnapshot.getChildren()) {
-                    Adventure retrievedStop = adventure.getValue(Adventure.class);
-                    Log.i("retrieved adventure", retrievedStop.getKey());
+                    Adventure retrievedAdventure = adventure.getValue(Adventure.class);
+                    Log.i("retrieved adventure", retrievedAdventure.getKey());
 
-                    adventures.add(retrievedStop);
+                    initBitmapDifficulty(retrievedAdventure);
+
+                    adventures.add(retrievedAdventure);
                 }
 
                 for (int i = 0; i < adventures.size(); i++) {
@@ -274,5 +276,21 @@ public class AdventureActivity extends AppCompatActivity {
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
 
 
+    }
+
+    public void initBitmapDifficulty (Adventure adventure) {
+        switch (adventure.getDifficulty()) {
+            case Adventure.CASUAL_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_casual));
+                break;
+            case Adventure.INTERMEDIATE_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_intermediate));
+                break;
+            case Adventure.ADVENTUROUS_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_adventurous));
+                break;
+            default:
+
+        }
     }
 }

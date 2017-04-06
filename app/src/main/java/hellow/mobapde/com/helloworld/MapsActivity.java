@@ -92,7 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest locationRequest;
 
     private String currentAdventureKey; // SET ON SHARED PREFERENCES or IN PROFILE
-    private Stop targetStop;
+    private StopWrapper targetStopWrapper;
     private PathWrapper currentPathWrapper;
 
     private StopWrapperList stopWrappers;
@@ -312,15 +312,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                dashboardButton.setVisibility(View.GONE);
-                llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                if (currentAdventureKey == null) {
+                    dashboardButton.setVisibility(View.GONE);
+                    llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                }
 
                 for (int i = 0; i < stopWrappers.size(); i++) {
                     Stop currentStop = stopWrappers.get(i).getStop();
 
                     if ( (currentStop.getLatLng().latitude == marker.getPosition().latitude) &&
                             (currentStop.getLatLng().longitude == marker.getPosition().longitude) )
-                        targetStop = currentStop;
+                        targetStopWrapper = stopWrappers.get(i);
                 }
 
                 LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
@@ -355,6 +357,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
             @Override
             public View getInfoWindow(Marker marker) {
                 return null;
@@ -362,10 +365,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public View getInfoContents(Marker marker) {
-
                 View v = getLayoutInflater().inflate(R.layout.info_window, null);
 
-                LatLng latLng = marker.getPosition();
+                TextView tv_stopname = (TextView) v.findViewById(R.id.tv_info_window_stopname);
+                TextView tv_distance = (TextView) v.findViewById(R.id.tv_info_window_distance);
+
+                StopWrapper assocStopWrapper = stopWrappers.getAssociatedStopWrapper(marker);
+                StopWrapper nearbyStopWrapper = locationIsInStopWrapper(currentLocation, stopWrappers);
+
+                tv_stopname.setText(assocStopWrapper.getStop().getDescription());
+
+                Location locationOfStop = new Location("null");
+                locationOfStop.setLatitude(marker.getPosition().latitude);
+                locationOfStop.setLongitude(marker.getPosition().longitude);
+
+                tv_distance.setText("Retrieving distance...");
+
+                float distanceFromCurrLoc = currentLocation.distanceTo(locationOfStop);
+
+                if (nearbyStopWrapper != null) {
+                    if (nearbyStopWrapper.isAssociated(marker)) {
+                        tv_distance.setText("You are currently here");
+                        tv_distance.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
+                    }
+                } else if (distanceFromCurrLoc < 1000.00)
+                    tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "m away");
+                else {
+                    distanceFromCurrLoc /= 1000;
+                    tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "km away");
+                }
 
                 return v;
             }
@@ -397,13 +425,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 Log.i("Clicked on", latLng.toString());
 
-                dashboardButton.setVisibility(View.VISIBLE);
-                llMarkerClickedContainer.setVisibility(View.GONE);
+                if (currentAdventureKey == null) {
+                    dashboardButton.setVisibility(View.VISIBLE);
+                    llMarkerClickedContainer.setVisibility(View.GONE);
+                }
 
                 if (currentPathWrapper.getPolyline() != null)
                     currentPathWrapper.removePolyline();
 
-                targetStop = null;
+                targetStopWrapper = null;
             }
         });
 
@@ -593,20 +623,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 nearbyStopWrapper.getMarker().setIcon(MarkerSettings.getInactivePin());
                 nearbyStopWrapper.getCircle().setStrokeColor(0xFFDDDDDD);
 
-
-
                 Log.i("Stop Detected", nearbyStopWrapper.getStop().getDescription());
             } else {
                 Log.i("Stop Detected", "none");
             }
         }
 
-        if (targetStop != null) {
+        if (targetStopWrapper != null) {
             LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
 
             PathWrapper pathWrapperForURL =
                     new PathWrapper(currentLatLng,
-                            targetStop.getLatLng(),
+                            targetStopWrapper.getStop().getLatLng(),
                             PathSettings.getPathColor(),
                             PathSettings.getPathColor());
 
@@ -615,7 +643,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             currentPathWrapper = pathWrapperForURL;
 
-            String url = getUrl(currentLatLng, targetStop.getLatLng());
+            String url = getUrl(currentLatLng, targetStopWrapper.getStop().getLatLng());
 
             Log.i("Generated URL", url);
 
@@ -806,6 +834,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 DataParser parser = new DataParser();
                 Log.d("ParserTask", parser.toString());
 
+                //distance
+                JSONObject jObjectDistance = jObject.getJSONArray("routes")
+                        .getJSONObject(0)
+                        .getJSONArray ("legs")
+                        .getJSONObject(0)
+                        .getJSONObject("distance");
+
+                pathWrapperSettings[0].distance = jObjectDistance.get("text").toString();
+                Log.i("retrieved dist", pathWrapperSettings[0].distance);
+
                 // Starts parsing data
                 routes = parser.parse(jObject);
                 Log.d("ParserTask","Executing routes");
@@ -856,7 +894,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Drawing polyline in the Google Map for the i-th route
             if(lineOptions != null) {
-                if (targetStop != null)
+                if (targetStopWrapper != null)
                     result.setPolyline(mMap.addPolyline(lineOptions));
             }
             else {
@@ -899,7 +937,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         locationOfStop.setLongitude(stops.get(i).getLongitude());
 
                         if (location.distanceTo(locationOfStop) <= NEARBY_METERS) {
-                            stopWrappers.add(addStopToMap(stops.get(i),mMap));
+                            stopWrappers.add(addStopToMap(stops.get(i), mMap));
                         }
                     }
                 }
@@ -914,4 +952,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return null;
         }
     }
+
 }

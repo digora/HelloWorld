@@ -30,6 +30,7 @@ public class FirebaseHelper {
     public static final String ST_PATH = "stamps";
     public static final String CUR_AD_KEY = "currAdKey";
     public static final String AD_LOG_KEY = "adventureLog";
+    public static final String VISITED_STOPS_KEY = "visitedStops";
 
     public FirebaseHelper () {
 
@@ -105,9 +106,8 @@ public class FirebaseHelper {
                 String curAdventure = dataSnapshot.getValue().toString();
 
                 firebaseReference.child(PRO_PATH).child(profileKey).child(AD_LOG_KEY).child(curAdventure).setValue(true);
-
                 firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(null);
-
+                firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).setValue(null);
             }
 
             @Override
@@ -142,4 +142,7 @@ public class FirebaseHelper {
         firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(null);
     }
 
+    public void updateProfilesVisitedStops(final String profileKey, String stopKey){
+        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).setValue(stopKey);
+    }
 }
