@@ -208,9 +208,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 llMarkerClickedContainer.setVisibility(View.GONE);
 
                 /* Insert code hiding infowindow/deselcting marker here */
+                stopWrappers.hideAllInfoWindows();
             }
         });
-    }
 
         btnViewRelAdventures.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -312,11 +312,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                llAdvStatusContainer.setVisibility(View.GONE);
+                dashboardButton.setVisibility(View.GONE);
                 llMarkerClickedContainer.setVisibility(View.VISIBLE);
-                return false;
-            }
-        });
 
                 for (int i = 0; i < stopWrappers.size(); i++) {
                     Stop currentStop = stopWrappers.get(i).getStop();
@@ -400,9 +397,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 Log.i("Clicked on", latLng.toString());
 
+                dashboardButton.setVisibility(View.VISIBLE);
                 llMarkerClickedContainer.setVisibility(View.GONE);
 
-                currentPathWrapper.removePolyline();
+                if (currentPathWrapper.getPolyline() != null)
+                    currentPathWrapper.removePolyline();
 
                 targetStop = null;
             }

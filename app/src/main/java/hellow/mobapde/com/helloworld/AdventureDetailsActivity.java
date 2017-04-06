@@ -3,6 +3,7 @@ package hellow.mobapde.com.helloworld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +11,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.FileInputStream;
 
-public class AdventureDetailsActivity extends AppCompatActivity implements OnMapReadyCallback{
+import hellow.mobapde.com.helloworld.Beans.Adventure;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
+
+public class AdventureDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
     Button btnGo;
     Button btnCancel;
     TextView tvAdventureViewedTitle;
@@ -29,6 +44,14 @@ public class AdventureDetailsActivity extends AppCompatActivity implements OnMap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adventure_details);
+
+        /*SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_detail);
+        supportMapFragment.getMapAsync(this);*/
+
+        firebaseHelper = new FirebaseHelper();
+
+        selectedAdventureKey = getIntent().getStringExtra(AdventureActivity.ADVENTURE_KEY);
 
         createContentView();
     }
@@ -88,19 +111,6 @@ public class AdventureDetailsActivity extends AppCompatActivity implements OnMap
 
             }
         });
-
-        /*Bitmap bmp = null;
-        String filename = collectIntent.getStringExtra("aPicture");
-        try{
-            FileInputStream fis = openFileInput(filename);
-            bmp = BitmapFactory.decodeStream(fis);
-            fis.close();
-
-            ivAdventureViewedPicture.setImageBitmap(bmp);
-        }catch(Exception e){
-            e.printStackTrace();
-        }*/
-
     }
 
     @Override
