@@ -1,6 +1,7 @@
 package hellow.mobapde.com.helloworld.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +26,11 @@ public class RelatedAdventureAdapter extends RecyclerView.Adapter<RelatedAdventu
 
     private RadioButton lastCheckedRB = null;
 
+    private int selectedIndex = -1;
+
     public RelatedAdventureAdapter(ArrayList<Adventure> relatedAdventureList){
         this.relatedAdventureList = relatedAdventureList;
     }
-
 
     @Override
     public RelatedAdventureAdapter.RelatedAdventureHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,6 +56,11 @@ public class RelatedAdventureAdapter extends RecyclerView.Adapter<RelatedAdventu
                     lastCheckedRB.setChecked(false);
                 }
                 //store the clicked radiobutton
+
+                selectedIndex = (int) buttonView.getTag();
+
+                Log.i("Selected Index", selectedIndex + "");
+
                 lastCheckedRB = checked_rb;
             }
         });
@@ -85,5 +92,13 @@ public class RelatedAdventureAdapter extends RecyclerView.Adapter<RelatedAdventu
             llRelAdvContainer = (LinearLayout) itemView.findViewById(R.id.ll_rel_adv_container);
 
         }
+    }
+
+    public int getSelectedIndex() {
+        return selectedIndex;
+    }
+
+    public void setSelectedIndex(int selectedIndex) {
+        this.selectedIndex = selectedIndex;
     }
 }

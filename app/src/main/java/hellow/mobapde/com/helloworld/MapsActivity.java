@@ -85,6 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public final static int NEARBY_METERS = 1000;
     public final static int SELECT_ADVENTURE = 0;
 
+    public final static String SELECT_STOP_KEY = "stop";
+
     public final static String LOCATION_KEY = "location";
 
     private GoogleMap mMap;
@@ -94,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
 
+    private String pendingAdventureKey;
     private Adventure currentAdventure;
     private ArrayList<Stop> completedStops;
     private StopWrapper targetStopWrapper;
@@ -224,15 +227,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 /* Insert code hiding infowindow/deselcting marker here */
                 stopWrappers.hideAllInfoWindows();
 
-                if(!isAdventureSelected){
+                if(pendingAdventureKey != null){
                     Toast.makeText(getBaseContext(), "No adventure selected.", Toast.LENGTH_LONG).show();
                 }else{
                     /* Start adventure */
+
                     Toast.makeText(getBaseContext(), "Adventure selected", Toast.LENGTH_LONG).show();
 
                     btnCancelAdventure.setVisibility(View.VISIBLE);
-
-
                 }
             }
         });
@@ -241,6 +243,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent viewRelIntent = new Intent(getBaseContext(), ViewRelAdvPopActivity.class);
+
+                viewRelIntent.putExtra(SELECT_STOP_KEY, targetStopWrapper.getStop().getKey());
+
                 startActivityForResult(viewRelIntent, SELECT_ADVENTURE);
             }
         });
@@ -248,7 +253,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnCancelAdventure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Tangina niyo lagay niyo kagaguhan niyo dito
+
+                if (currentAdventure != null) {
+                    String userKey = sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
+
+                    firebaseHelper.cancelCurrentAdventure(userKey);
+
+                    mMap.clear();
+                    stopWrappers = new StopWrapperList();
+
+                    setCurrentAdventure(null);
+                }
+
             }
         });
 
@@ -265,6 +281,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // The Intent's data Uri identifies which contact was selected.
 
                 Boolean wasSomethingSelected = data.getBooleanExtra("selected", false);
+
+                pendingAdventureKey = data.getStringExtra(ViewRelAdvPopActivity.PENDING_ADVENTURE_KEY);
+
+                if (pendingAdventureKey != null)
+                    Log.i("Pending Adventure Key", pendingAdventureKey);
+                else
+                    Log.i("Pending Adventure Key", "none");
 
                 if(wasSomethingSelected){
                     btnMapsGoing.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -624,10 +647,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (adventure != null) {
             tvCurrentAdventureName.setText(adventure.getName());
-            tvCurrentAdventureName.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
+            tvCurrentAdventureName.setTextColor(0xFF212121);
+            btnCancelAdventure.setVisibility(View.VISIBLE);
         } else {
             tvCurrentAdventureName.setText("No Current Adventure");
-            tvCurrentAdventureName.setTextColor(0xFF212121);
+            tvCurrentAdventureName.setTextColor(0xFFBDBDBD);
+            btnCancelAdventure.setVisibility(View.GONE);
         }
     }
 

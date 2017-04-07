@@ -142,6 +142,7 @@ public class FirebaseHelper {
 
     public void cancelCurrentAdventure(final String profileKey){
         firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(null);
+        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).setValue(null);
     }
 
     public void updateProfilesVisitedStops(final String profileKey, String stopKey){

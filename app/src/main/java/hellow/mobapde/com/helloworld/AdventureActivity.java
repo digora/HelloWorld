@@ -325,7 +325,7 @@ public class AdventureActivity extends AppCompatActivity {
 
     }
 
-    public void initBitmapDifficulty (Adventure adventure) {
+    public void initBitmapDifficulty(Adventure adventure) {
         switch (adventure.getDifficulty()) {
             case Adventure.CASUAL_DIFFICULTY :
                 adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_casual));
