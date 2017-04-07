@@ -9,15 +9,7 @@
 
     tools:context="hellow.mobapde.com.helloworld.AdventureDetailsActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="32dp"
-        android:id="@+id/tv_adventure_viewed_title"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:fontFamily="sans-serif-light"
-        android:text="7/11 Adventure"/>
+
 
     <!--<ImageView
         android:layout_width="match_parent"
@@ -33,6 +25,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32dp"
+        android:id="@+id/tv_adventure_viewed_title"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-light"
+        android:text="7/11 Adventure"/>
 
     <TextView
         android:id="@+id/tv_adventure_viewed_details"
@@ -74,7 +78,7 @@
             android:textColor="@color/fontColor"
             android:textStyle="bold" />
 
-    
+
 
 
     </LinearLayout>
