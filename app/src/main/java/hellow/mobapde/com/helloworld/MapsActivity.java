@@ -367,7 +367,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("Clicked on", latLng.toString());
 
                 llMarkerClickedContainer.setVisibility(View.GONE);
-
+                dashboardButton.setVisibility(View.VISIBLE);
 
             }
         });

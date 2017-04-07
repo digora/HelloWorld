@@ -1,5 +1,6 @@
 package hellow.mobapde.com.helloworld;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -106,6 +107,16 @@ public class StampPopActivity extends AppCompatActivity {
 
         Log.d(TAG, "Assigning adapter to stamp list");
         stampAdapter = new StampAdapter(stampList);
+        stampAdapter.setOnStampClickListener(new StampAdapter.OnStampClickListener() {
+            @Override
+            public void onStampClick(View view, Stamp s) {
+                Intent viewStampDetailsIntent = new Intent(getBaseContext(), ViewStampPopActivity.class);
+                viewStampDetailsIntent.putExtra("sName", s.getName());
+
+
+                startActivity(viewStampDetailsIntent);
+            }
+        });
         rvStamps.setAdapter(stampAdapter);
 
     }

@@ -1,5 +1,6 @@
 package hellow.mobapde.com.helloworld;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -102,6 +104,17 @@ public class AdventurePopActivity extends AppCompatActivity {
         Log.d(TAG, "Assigning adapter to adventure list");
 
         adventureAdapter = new AdventureAdapter(adventureList);
+        adventureAdapter.setOnAdventureClickListener(new AdventureAdapter.OnAdventureClickListener() {
+            @Override
+            public void onAdventureClick(View view, Adventure a) {
+                Intent viewAdventureDetailIntent = new Intent(getBaseContext(), ViewAdventurePopActivity.class);
+                viewAdventureDetailIntent.putExtra("aName", a.getName());
+                //viewAdventureDetailIntent.putExtra("aPic", a.getPicture()); PICTURE NAG EEROR KUNG MERON. KAYO NA BAHALA MGA GAGO
+
+                startActivity(viewAdventureDetailIntent);
+
+            }
+        });
         rvAdventures.setAdapter(adventureAdapter);
 
     }

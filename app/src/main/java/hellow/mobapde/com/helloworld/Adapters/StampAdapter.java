@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stamp;
 import hellow.mobapde.com.helloworld.R;
 
@@ -22,6 +24,8 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampHolder>
     private static String TAG = "StampAdapter";
 
     ArrayList<Stamp> stampList;
+
+    StampAdapter.OnStampClickListener onStampClickListener;
 
     public StampAdapter(ArrayList stampList){
         this.stampList = stampList;
@@ -41,6 +45,13 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampHolder>
         holder.ivStampImagePreview.setImageBitmap(stamp.getPicture());
         holder.tvStampTitle.setText(stamp.getName());
 
+        holder.llStampPopContainer.setTag(stamp);
+        holder.llStampPopContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStampClickListener.onStampClick(v, (Stamp) v.getTag());
+            }
+        });
 
 
     }
@@ -54,12 +65,28 @@ public class StampAdapter extends RecyclerView.Adapter<StampAdapter.StampHolder>
         TextView tvStampTitle;
         ImageView ivStampImagePreview;
 
+        LinearLayout llStampPopContainer;
+
         public StampHolder(View itemView) {
             super(itemView);
 
             tvStampTitle = (TextView) itemView.findViewById(R.id.tv_stamp_title);
             ivStampImagePreview = (ImageView) itemView.findViewById(R.id.iv_stamp_image_preview);
+
+            llStampPopContainer = (LinearLayout) itemView.findViewById(R.id.ll_stamp_pop_container);
         }
+    }
+
+    public interface OnStampClickListener{
+        public void onStampClick(View view, Stamp s);
+    }
+
+    public StampAdapter.OnStampClickListener getOnStampClickListener()    {
+        return onStampClickListener;
+    }
+
+    public void setOnStampClickListener(StampAdapter.OnStampClickListener onStampClickListener) {
+        this.onStampClickListener = onStampClickListener;
     }
 
 

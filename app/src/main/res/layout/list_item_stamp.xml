@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:paddingLeft="6dp"
     android:paddingTop="32dp"
+
+    android:id="@+id/ll_stamp_pop_container"
     android:gravity="center">
 
     <ImageView
