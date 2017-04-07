@@ -14,4 +14,5 @@
     <color name="profileFontColor">#000</color>
     <color name="darkMetal">#BDBCBC</color>
     <color name="lightMetal">#E0E1E1</color>
+    <color name="primary_text_default_material_light">#deffffff</color>
 </resources>

@@ -73,7 +73,13 @@
             android:theme="@style/AppTheme.PopUpTheme" />
         <activity
             android:name=".MoreActivity"
-            android:theme="@style/AppTheme.ActionBar"/>
+            android:theme="@style/AppTheme.ActionBar" />
+        <activity
+            android:name=".ViewStampPopActivity"
+            android:theme="@style/AppTheme.ViewPopUpTheme"/>
+        <activity
+            android:name=".ViewAdventurePopActivity"
+            android:theme="@style/AppTheme.ViewPopUpTheme"/>
     </application>
 
 </manifest>
