@@ -98,10 +98,22 @@
             android:text="View Adventures"
             android:background="@null"
             android:textSize="12sp"
-            android:textColor="#808080"
+            android:textColor="@color/darkMetal"
             android:id="@+id/btn_view_adventures"
             android:padding="12dp"
             android:layout_gravity="right"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Cancel Adventure"
+            android:background="@null"
+            android:textSize="12sp"
+            android:textColor="@color/darkMetal"
+            android:id="@+id/btn_cancel_adventure"
+            android:visibility="gone"
+            android:padding="12dp"
+            android:layout_gravity="left"/>
 
     </LinearLayout>
 

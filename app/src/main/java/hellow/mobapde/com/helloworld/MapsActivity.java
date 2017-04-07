@@ -3,7 +3,6 @@ package hellow.mobapde.com.helloworld;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,8 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -59,11 +56,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import hellow.mobapde.com.helloworld.Beans.Profile;
 import hellow.mobapde.com.helloworld.Converter.MapToArrayListConverter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Beans.Stop;
@@ -85,8 +79,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public final static int NEARBY_METERS = 1000;
     public final static int SELECT_ADVENTURE = 0;
 
-    public final static String LOCATION_KEY = "location";
-
     private GoogleMap mMap;
     FloatingActionButton dashboardButton;
     Button btnViewAdventures;
@@ -94,9 +86,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
 
-    private Adventure currentAdventure;
-    private ArrayList<Stop> completedStops;
-    private StopWrapper targetStopWrapper;
+    private String currentAdventureKey; // SET ON SHARED PREFERENCES or IN PROFILE
+    private Stop targetStop;
     private PathWrapper currentPathWrapper;
 
     private StopWrapperList stopWrappers;
@@ -115,10 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Button btnMapsGoing;
     Button btnViewRelAdventures;
+    Button btnCancelAdventure;
 
     private boolean isAdventureSelected = false;
-
-    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,21 +117,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         FirebaseApp.initializeApp(getBaseContext());
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
-        completedStops = new ArrayList<>();
-
         firebaseHelper = new FirebaseHelper();
 
         stopWrappers = new StopWrapperList();
         pathWrappers = new PathWrapperList();
 
-        String currentAdventureKey = getIntent().getStringExtra(AdventureActivity.ADVENTURE_KEY);
-
-        if (currentAdventureKey != null) {
-            currentAdventure = new Adventure();
-            currentAdventure.setKey(currentAdventureKey);
-        }
+        //currentAdventureKey = "-Kg7iwO2x-7kwHkgmEbQ"; // HARD CODED
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -159,7 +140,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createContentView();
         initListeners();
 
-        if(sharedPreferences.contains(NoNameActivity.USER_KEY)) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        if(sharedPreferences.contains(NoNameActivity.USERNAME)) {
             //Yay you don't have to go back
         }else {
             Intent i = new Intent(getBaseContext(), NoNameActivity.class);
@@ -182,11 +165,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnMapsGoing = (Button) findViewById(R.id.btn_maps_going);
 
         btnViewRelAdventures = (Button) findViewById(R.id.btn_view_rel_adventures);
+
+        btnCancelAdventure = (Button) findViewById(R.id.btn_cancel_adventure);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (currentAdventureKey != null) {
+            adventureReference = firebaseHelper.getAdReference().child(currentAdventureKey);
+
+            adventureReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Adventure adventure = dataSnapshot.getValue(Adventure.class);
+
+                    initMarkersAndCircles(adventure);
+                    setCurrentAdventure(adventure);
+                    addAdventureToMap(adventure, mMap, new PathWrapper(0x66FF0000, 12));
+
+                    onLocationChanged(currentLocation);
+
+                    Log.i("Retrieved Adventure", adventure.getName());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
     }
 
     public void initListeners(){
@@ -206,8 +216,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent viewAdventureIntent = new Intent();
                 viewAdventureIntent.setClass(getBaseContext(), AdventureActivity.class);
 
-                viewAdventureIntent.putExtra(LOCATION_KEY, currentLocation);
-
                 startActivity(viewAdventureIntent);
             }
         });
@@ -215,11 +223,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnMapsGoing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                llAdvStatusContainer.setVisibility(View.VISIBLE);
-                llMarkerClickedContainer.setVisibility(View.GONE);
+                if(!isAdventureSelected){
+                    Toast.makeText(getBaseContext(), "No adventure selected.", Toast.LENGTH_LONG).show();
+                }else{
+                    /* Start adventure */
+                    Toast.makeText(getBaseContext(), "Adventure selected", Toast.LENGTH_LONG).show();
 
-                /* Insert code hiding infowindow/deselcting marker here */
-                stopWrappers.hideAllInfoWindows();
+                    btnCancelAdventure.setVisibility(View.VISIBLE);
+
+
+                }
             }
         });
 
@@ -228,6 +241,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent viewRelIntent = new Intent(getBaseContext(), ViewRelAdvPopActivity.class);
                 startActivityForResult(viewRelIntent, SELECT_ADVENTURE);
+            }
+        });
+
+        btnCancelAdventure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Tangina niyo lagay niyo kagaguhan niyo dito
             }
         });
 
@@ -260,67 +280,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void retrieveCurrentAdventure() {
-            final String userKey = sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
-
-            DatabaseReference currentProfile = firebaseHelper.getProfileReference(userKey);
-
-        currentProfile.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    final Profile currentProfile = dataSnapshot.getValue(Profile.class);
-
-                    if (currentProfile != null) {
-
-                        if (currentProfile.getCurrAdKey() != null) {
-
-                            Log.i("retrieved Curr Ad", currentProfile.getCurrAdKey());
-
-                            DatabaseReference currentAdventureRef = firebaseHelper.getAdventureReference(currentProfile.getCurrAdKey());
-
-                            currentAdventureRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Adventure adventure = dataSnapshot.getValue(Adventure.class);
-
-                                    Log.i("Retrieved Adventure", adventure.getName());
-
-                                    mMap.clear();
-                                    stopWrappers = new StopWrapperList();
-
-                                    initVisitedStops(adventure, currentProfile.getVisitedStops());
-
-                                    setCurrentAdventure(adventure);
-                                    addAdventureToMap(adventure, mMap);
-
-                                    viewAllMarkersInMap(stopWrappers, mMap);
-
-                                    onLocationChanged(currentLocation);
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        } else {
-                            setCurrentAdventure(null);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        retrieveCurrentAdventure();
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
@@ -330,18 +292,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                if (currentAdventure == null) {
-                    dashboardButton.setVisibility(View.GONE);
-                    llMarkerClickedContainer.setVisibility(View.VISIBLE);
-                }
+                dashboardButton.setVisibility(View.GONE);
+                llMarkerClickedContainer.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
 
-                for (int i = 0; i < stopWrappers.size(); i++) {
-                    Stop currentStop = stopWrappers.get(i).getStop();
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
 
-                    if ( (currentStop.getLatLng().latitude == marker.getPosition().latitude) &&
-                            (currentStop.getLatLng().longitude == marker.getPosition().longitude) )
-                        targetStopWrapper = stopWrappers.get(i);
-                }
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                View v = getLayoutInflater().inflate(R.layout.info_window, null);
+
+                LatLng latLng = marker.getPosition();
+
+                return v;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
 
                 LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
                         currentLocation.getLongitude());
@@ -352,10 +328,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 PathSettings.getPathColor(),
                                 PathSettings.getPathThickness());
 
-                if (currentPathWrapper != null) {
-                    if (currentPathWrapper.getPolyline() != null)
-                        currentPathWrapper.removePolyline();
-                }
+                if (currentPathWrapper != null)
+                    currentPathWrapper.removePolyline();
 
                 currentPathWrapper = pathWrapperForURL;
 
@@ -371,63 +345,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Start downloading json data from Google Directions API
                 fetchUrl.execute(pathWrapperForURL);
-
-                return false;
-            }
-        });
-
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                View v = getLayoutInflater().inflate(R.layout.info_window, null);
-
-                TextView tv_stopname = (TextView) v.findViewById(R.id.tv_info_window_stopname);
-                TextView tv_distance = (TextView) v.findViewById(R.id.tv_info_window_distance);
-
-                StopWrapper assocStopWrapper = stopWrappers.getAssociatedStopWrapper(marker);
-                StopWrapper nearbyStopWrapper = locationIsInStopWrapper(currentLocation, stopWrappers);
-
-                tv_stopname.setText(assocStopWrapper.getStop().getDescription());
-
-                Location locationOfStop = new Location("null");
-                locationOfStop.setLatitude(marker.getPosition().latitude);
-                locationOfStop.setLongitude(marker.getPosition().longitude);
-
-                float distanceFromCurrLoc = currentLocation.distanceTo(locationOfStop);
-
-                Log.i("Distance From Loc", distanceFromCurrLoc + "");
-
-                if (nearbyStopWrapper != null) {
-                    if (nearbyStopWrapper.isAssociated(marker)) {
-                        tv_distance.setText("You are currently here");
-                        tv_distance.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
-
-                        return v;
-                    }
-                }
-
-                if (distanceFromCurrLoc < 1000) {
-                    tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "m away");
-                } else {
-                    distanceFromCurrLoc /= 1000;
-                    tv_distance.setText(String.format("Approx. %.2f", distanceFromCurrLoc) + "km away");
-                }
-
-                return v;
-            }
-        });
-
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                //nocontent
 
             }
         });
@@ -449,16 +366,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 Log.i("Clicked on", latLng.toString());
 
-                if (currentAdventure == null) {
-                    dashboardButton.setVisibility(View.VISIBLE);
-                    llMarkerClickedContainer.setVisibility(View.GONE);
-                }
-                if (currentPathWrapper != null) {
-                    if (currentPathWrapper.getPolyline() != null)
-                        currentPathWrapper.removePolyline();
-                }
+                llMarkerClickedContainer.setVisibility(View.GONE);
 
-                targetStopWrapper = null;
+
             }
         });
 
@@ -504,32 +414,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLngBounds bounds = builder.build();
 
-        int padding = 400; // offset from edges of the map in pixels
+        int padding = 20; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels;
-        int width = displayMetrics.widthPixels;
-
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-
-        map.animateCamera(cu);
+        map.moveCamera(cu);
     }
 
-    private void addAdventureToMap(Adventure adventure, GoogleMap map) {
+    private void addAdventureToMap(Adventure adventure, GoogleMap map, PathWrapper pathWrapperSettings) {
 
-        initMarkersAndCircles(adventure);
+        ArrayList<Stop> stopsOfAdventure;
 
-        Object[] objects = adventure.getStops().keySet().toArray();
+        stopsOfAdventure = MapToArrayListConverter.convertMapToStopArray(adventure.getStops());
 
-        String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
-
-        for (int i = 0; i < adventure.getNumberOfStops(); i++) {
-            stopWrappers.add(addStopToMap(adventure.getStop(keys[i]), map));
+        for (int i = 0; i < stopsOfAdventure.size(); i++) {
+            stopWrappers.add(addStopToMap(stopsOfAdventure.get(i), map));
         }
     }
 
     private void removeAdventureFromMap(Adventure adventure, GoogleMap map) {
+
+        // used for cancelling adventures
 
         for (int i = 0; i < stopWrappers.size(); i++) {
             if (adventure.getKey().equals(stopWrappers.get(i).getAdventureKey())) {
@@ -561,7 +465,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private StopWrapper addStopToMap(Stop stop, GoogleMap map) {
 
-        for (int i = 0; i < stopWrappers.size(); i++) { // to prevent multiple
+        for (int i = 0; i < stopWrappers.size(); i++) {
 
             Stop currentStop = stopWrappers.get(i).getStop();
 
@@ -598,20 +502,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void setCurrentAdventure(Adventure adventure) {
+        currentAdventureKey = adventure.getKey();
 
-        currentAdventure = adventure;
-
-        if (adventure != null) {
-            tvCurrentAdventureName.setText(adventure.getName());
-            tvCurrentAdventureName.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null));
-        } else {
-            tvCurrentAdventureName.setText("No Current Adventure");
-            tvCurrentAdventureName.setTextColor(0xFF212121);
-        }
+        tvCurrentAdventureName.setText(adventure.getName());
     }
 
-    public Adventure getCurrentAdventure() {
-        return currentAdventure;
+    public String getCurrentAdventureKey() {
+        return currentAdventureKey;
+    }
+
+    public void setCurrentAdventureKey(String key) {
+        currentAdventureKey = key;
     }
 
     @Override
@@ -629,13 +530,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("Location", "Changed");
         currentLocation = location;
 
-        /*if (googleApiClient != null) {
+        moveCameraToLocation(location, mMap);
+
+        if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        }*/
+        }
 
-        if (currentAdventure == null) {
-            moveCameraToLocation(location, mMap);
-
+        if (currentAdventureKey == null) {
             DisplayNearStops displayNearStops = new DisplayNearStops();
 
             displayNearStops.execute(currentLocation);
@@ -643,26 +544,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             StopWrapper nearbyStopWrapper = locationIsInStopWrapper(location, stopWrappers);
 
             if (nearbyStopWrapper != null) {
-
-                nearbyStopWrapper.turnInactive();
-
-                if (!completedStops.contains(nearbyStopWrapper.getStop()))
-                    completedStops.add(nearbyStopWrapper.getStop());
-
-                String userKey = sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
-                firebaseHelper.updateProfilesVisitedStops(userKey, nearbyStopWrapper.getStop().getKey());
-
-                if (completedStops.size() == currentAdventure.getNumberOfStops()) {
-                    firebaseHelper.updateProfilesAdventure(userKey);
-
-                    mMap.clear();
-
-                    stopWrappers = new StopWrapperList();
-                    setCurrentAdventure(null);
-                    Log.i("Progress:", "ADVENTURE COMPLETE");
-                } else {
-                    Log.i("Progress:", completedStops.size() + "/" + currentAdventure.getNumberOfStops());
-                }
+                nearbyStopWrapper.getMarker().setIcon(MarkerSettings.getInactivePin());
 
                 Log.i("Stop Detected", nearbyStopWrapper.getStop().getDescription());
             } else {
@@ -670,23 +552,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        if (targetStopWrapper != null) {
+        if (targetStop != null) {
             LatLng currentLatLng = new LatLng ( location.getLatitude(), location.getLongitude() );
 
             PathWrapper pathWrapperForURL =
                     new PathWrapper(currentLatLng,
-                            targetStopWrapper.getStop().getLatLng(),
+                            targetStop.getLatLng(),
                             PathSettings.getPathColor(),
                             PathSettings.getPathColor());
 
-            if (currentPathWrapper != null) {
-                if (currentPathWrapper.getPolyline() != null)
-                    currentPathWrapper.removePolyline();
-            }
+            if (currentPathWrapper != null)
+                currentPathWrapper.removePolyline();
 
             currentPathWrapper = pathWrapperForURL;
 
-            String url = getUrl(currentLatLng, targetStopWrapper.getStop().getLatLng());
+            String url = getUrl(currentLatLng, targetStop.getLatLng());
 
             Log.i("Generated URL", url);
 
@@ -710,29 +590,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             Stop stop = adventure.getStop(keys[i]);
 
-            if (!stop.isVisited()) {
-                stop.setMarkerOptions(new MarkerOptions()
-                        .position(stop.getLatLng())
-                        .title(stop.getDescription())
-                        .icon(MarkerSettings.getActivePin()));
+            stop.setMarkerOptions(new MarkerOptions()
+                    .position(stop.getLatLng())
+                    .title(stop.getDescription())
+                    .icon(MarkerSettings.getActivePin()));
 
-                stop.setCircleOptions(new CircleOptions()
-                        .center(stop.getLatLng())
-                        .fillColor(CircleSettings.getFillColor())
-                        .strokeColor(CircleSettings.getStrokeColor())
-                        .radius(CircleSettings.getRadius()));
-            } else { // asdfasdf
-                stop.setMarkerOptions(new MarkerOptions()
-                        .position(stop.getLatLng())
-                        .title(stop.getDescription())
-                        .icon(MarkerSettings.getInactivePin()));
-
-                stop.setCircleOptions(new CircleOptions()
-                        .center(stop.getLatLng())
-                        .fillColor(CircleSettings.getFillColor())
-                        .strokeColor(CircleSettings.getInactiveStrokeColor())
-                        .radius(CircleSettings.getRadius()));
-            }
+            stop.setCircleOptions(new CircleOptions()
+                    .center(stop.getLatLng())
+                    .fillColor(CircleSettings.getFillColor())
+                    .strokeColor(CircleSettings.getStrokeColor())
+                    .radius(CircleSettings.getRadius())
+                    .radius(20));
         }
     }
 
@@ -751,23 +619,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .fillColor(CircleSettings.getFillColor())
                     .strokeColor(CircleSettings.getStrokeColor())
                     .radius(CircleSettings.getRadius()));
-        }
-    }
-
-    private void initVisitedStops (Adventure adventure, Map<String, String> visitedStops) {
-        if (visitedStops != null) {
-            Object[] objects = adventure.getStops().keySet().toArray();
-
-            String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
-
-            for (int i = 0; i < adventure.getNumberOfStops(); i++) {
-                String currentKey = adventure.getStop(keys[i]).getKey();
-
-                if (visitedStops.get(currentKey) != null) {
-                    adventure.getStop(keys[i]).setVisited(true);
-                    completedStops.add(adventure.getStop(keys[i]));
-                }
-            }
         }
     }
 
@@ -906,16 +757,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 DataParser parser = new DataParser();
                 Log.d("ParserTask", parser.toString());
 
-                //distance
-                JSONObject jObjectDistance = jObject.getJSONArray("routes")
-                        .getJSONObject(0)
-                        .getJSONArray ("legs")
-                        .getJSONObject(0)
-                        .getJSONObject("distance");
-
-                pathWrapperSettings[0].distance = jObjectDistance.get("text").toString();
-                Log.i("retrieved dist", pathWrapperSettings[0].distance);
-
                 // Starts parsing data
                 routes = parser.parse(jObject);
                 Log.d("ParserTask","Executing routes");
@@ -966,8 +807,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Drawing polyline in the Google Map for the i-th route
             if(lineOptions != null) {
-                if (targetStopWrapper != null)
-                    result.setPolyline(mMap.addPolyline(lineOptions));
+                result.setPolyline(mMap.addPolyline(lineOptions));
             }
             else {
                 Log.d("onPostExecute","without Polylines drawn");
@@ -1009,13 +849,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         locationOfStop.setLongitude(stops.get(i).getLongitude());
 
                         if (location.distanceTo(locationOfStop) <= NEARBY_METERS) {
-                            StopWrapper stopWrapper = addStopToMap(stops.get(i), mMap);
-
-                            if (stopWrapper != null)
-                                stopWrappers.add(stopWrapper);
+                            stopWrappers.add(addStopToMap(stops.get(i),mMap));
                         }
                     }
-
                 }
 
                 @Override
@@ -1028,5 +864,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return null;
         }
     }
-
 }
