@@ -106,6 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Button btnMapsGoing;
     Button btnViewRelAdventures;
+    Button btnCancelAdventure;
 
     private boolean isAdventureSelected = false;
 
@@ -164,6 +165,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnMapsGoing = (Button) findViewById(R.id.btn_maps_going);
 
         btnViewRelAdventures = (Button) findViewById(R.id.btn_view_rel_adventures);
+
+        btnCancelAdventure = (Button) findViewById(R.id.btn_cancel_adventure);
     }
 
     @Override
@@ -225,6 +228,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }else{
                     /* Start adventure */
                     Toast.makeText(getBaseContext(), "Adventure selected", Toast.LENGTH_LONG).show();
+
+                    btnCancelAdventure.setVisibility(View.VISIBLE);
+
+
                 }
             }
         });
@@ -234,6 +241,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent viewRelIntent = new Intent(getBaseContext(), ViewRelAdvPopActivity.class);
                 startActivityForResult(viewRelIntent, SELECT_ADVENTURE);
+            }
+        });
+
+        btnCancelAdventure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Tangina niyo lagay niyo kagaguhan niyo dito
             }
         });
 
