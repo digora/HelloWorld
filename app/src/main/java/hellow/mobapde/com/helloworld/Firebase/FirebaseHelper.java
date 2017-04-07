@@ -105,7 +105,7 @@ public class FirebaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String curAdventure = dataSnapshot.getValue().toString();
 
-                firebaseReference.child(PRO_PATH).child(profileKey).child(AD_LOG_KEY).child(curAdventure).setValue(true);
+                firebaseReference.child(PRO_PATH).child(profileKey).child(AD_LOG_KEY).child(curAdventure).setValue("true");
                 firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(null);
                 firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).setValue(null);
             }
@@ -119,7 +119,6 @@ public class FirebaseHelper {
 
     public void updateProfilesCurrAdventure(final String profileKey, String adventureKey){
         firebaseReference.child(PRO_PATH).child(profileKey).child(CUR_AD_KEY).setValue(adventureKey);
-
     }
 
     public String createStop(Stop s){
