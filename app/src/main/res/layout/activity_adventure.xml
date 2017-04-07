@@ -92,6 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="right"
+                        android:id="@+id/tv_more_latest"
                         android:text="MORE"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"/>
@@ -122,7 +123,7 @@
                         android:textSize="16sp"
                         android:textColor="#000"
                         android:gravity="left"
-                        android:text="TOP ADVENTURES"/>
+                        android:text="SIMPLE ADVENTURES"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -130,6 +131,7 @@
                         android:layout_weight="1"
                         android:gravity="right"
                         android:text="MORE"
+                        android:id="@+id/tv_more_simple"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"/>
 
@@ -140,12 +142,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/rv_top_list"/>
             </LinearLayout>
-
-
-
-
-
-
 
         </LinearLayout>
     </ScrollView>
