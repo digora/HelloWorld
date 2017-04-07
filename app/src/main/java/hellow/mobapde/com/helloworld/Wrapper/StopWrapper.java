@@ -5,6 +5,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import hellow.mobapde.com.helloworld.Beans.Stop;
+import hellow.mobapde.com.helloworld.Settings.CircleSettings;
+import hellow.mobapde.com.helloworld.Settings.MarkerSettings;
 
 /**
  * Created by patricktobias on 28/03/2017.
@@ -86,5 +88,15 @@ public class StopWrapper {
 
     public void showInfoWindow () {
         marker.showInfoWindow();
+    }
+
+    public void turnInactive () {
+        getMarker().setIcon(MarkerSettings.getInactivePin());
+        getCircle().setStrokeColor(CircleSettings.getInactiveStrokeColor());
+    }
+
+    public void turnActive () {
+        getMarker().setIcon(MarkerSettings.getActivePin());
+        getCircle().setStrokeColor(CircleSettings.getStrokeColor());
     }
 }

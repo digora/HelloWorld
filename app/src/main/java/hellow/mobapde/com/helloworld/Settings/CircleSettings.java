@@ -18,6 +18,10 @@ public class CircleSettings {
         return 0xFFD32F2F;
     }
 
+    public static int getInactiveStrokeColor () {
+        return 0xFFDDDDDD;
+    }
+
     public static int getRadius () {
         return 20;
     }

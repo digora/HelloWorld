@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.jar.*;
 
+import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,12 +26,24 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSION_MAP_GRANTED = 1;
     Button btnStart;
 
+    FirebaseHelper firebaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         requestPermission();
+
+        firebaseHelper = new FirebaseHelper();
+
+        /*Stop stop = new Stop();
+
+        stop.setDescription("Archers Place");
+        stop.setLatitude("14.566132553166174");
+        stop.setLongitude("120.99248863756655");
+
+        firebaseHelper.createStop(stop);*/
 
         btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {

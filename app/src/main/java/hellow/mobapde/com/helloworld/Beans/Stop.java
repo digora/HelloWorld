@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.Exclude;
 
 /**
  * Created by Patrick on 3/3/2017.
@@ -22,6 +23,7 @@ public class Stop {
     private MarkerOptions markerOptions;
     private Picture picture;
     private CircleOptions circleOptions;
+    @Exclude
     private boolean visited;
 
 
@@ -88,6 +90,7 @@ public class Stop {
         return Double.parseDouble(longitude);
     }
 
+    @Exclude
     public LatLng getLatLng() {
         return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
     }
@@ -108,7 +111,6 @@ public class Stop {
     public void setTitle(String title) {
         markerOptions.title(title);
     }
-
     public void setRadius(double radius) {
         circleOptions.radius(radius);
     }

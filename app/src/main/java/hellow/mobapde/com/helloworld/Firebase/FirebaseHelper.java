@@ -122,11 +122,13 @@ public class FirebaseHelper {
 
     }
 
-    public void createStop(Stop s){
+    public String createStop(Stop s){
         DatabaseReference stopReference = firebaseReference.child(STOP_PATH);
         String key = stopReference.push().getKey();
         s.setKey(key);
         stopReference.child(key).setValue(s);
+
+        return key;
     }
 
     public String createProfile(Profile p){
@@ -143,6 +145,10 @@ public class FirebaseHelper {
     }
 
     public void updateProfilesVisitedStops(final String profileKey, String stopKey){
-        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).setValue(stopKey);
+        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).child(stopKey).setValue(true);
+    }
+
+    public DatabaseReference getVisitedStopsReference(final String profileKey) {
+        return firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY);
     }
 }
