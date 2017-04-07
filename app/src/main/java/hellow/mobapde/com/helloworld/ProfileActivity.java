@@ -146,7 +146,10 @@ public class ProfileActivity extends AppCompatActivity {
         fBtnVaAdventures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(), AdventurePopActivity.class));
+
+                Intent intent = new Intent(getBaseContext(), AdventurePopActivity.class);
+
+                startActivity(intent);
             }
         });
 

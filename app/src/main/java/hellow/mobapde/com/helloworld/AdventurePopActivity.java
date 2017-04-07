@@ -1,7 +1,9 @@
 package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +16,20 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import hellow.mobapde.com.helloworld.Adapters.AdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
+import hellow.mobapde.com.helloworld.Beans.Profile;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
 public class AdventurePopActivity extends AppCompatActivity {
 
@@ -30,11 +40,19 @@ public class AdventurePopActivity extends AppCompatActivity {
     AdventureAdapter adventureAdapter;
     TextView tvAdvPopBack;
 
+    String userKey;
+
+    FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adventure_pop);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        userKey =  sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
+
+        firebaseHelper = new FirebaseHelper();
 
         createContentView();
     }
@@ -72,7 +90,7 @@ public class AdventurePopActivity extends AppCompatActivity {
     /* DELETE Temporary Data */
     public void initDummyAdventureData(){
         adventureList = new ArrayList<>();
-        adventureList.add(new Adventure("South Adventure",
+        /*adventureList.add(new Adventure("South Adventure",
                 "Venture the south.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
@@ -95,7 +113,46 @@ public class AdventurePopActivity extends AppCompatActivity {
         adventureList.add(new Adventure("North Adventure",
                 "Venture the north.",
                 "Incomplete",
-                BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
+                BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));*/
+
+        DatabaseReference profileReference = firebaseHelper.getProfileReference(userKey);
+
+        profileReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Profile profile = dataSnapshot.getValue(Profile.class);
+
+                Object[] objects = profile.getAdventureLog().keySet().toArray();
+
+                String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
+
+                for (String key : keys) {
+                    DatabaseReference adventureReference = firebaseHelper.getAdventureReference(key);
+
+                    adventureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Adventure adventure = dataSnapshot.getValue(Adventure.class);
+
+                            initBitmapDifficulty(adventure);
+
+                            adventureList.add(adventure);
+                            adventureAdapter.notifyItemInserted(adventureList.size());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -109,7 +166,7 @@ public class AdventurePopActivity extends AppCompatActivity {
             public void onAdventureClick(View view, Adventure a) {
                 Intent viewAdventureDetailIntent = new Intent(getBaseContext(), ViewAdventurePopActivity.class);
                 viewAdventureDetailIntent.putExtra("aName", a.getName());
-                //viewAdventureDetailIntent.putExtra("aPic", a.getPicture()); PICTURE NAG EEROR KUNG MERON. KAYO NA BAHALA MGA GAGO
+                viewAdventureDetailIntent.putExtra("aDifficulty", a.getDifficulty());
 
                 startActivity(viewAdventureDetailIntent);
 
@@ -117,5 +174,21 @@ public class AdventurePopActivity extends AppCompatActivity {
         });
         rvAdventures.setAdapter(adventureAdapter);
 
+    }
+
+    public void initBitmapDifficulty(Adventure adventure) {
+        switch (adventure.getDifficulty()) {
+            case Adventure.CASUAL_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_casual));
+                break;
+            case Adventure.INTERMEDIATE_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_intermediate));
+                break;
+            case Adventure.ADVENTUROUS_DIFFICULTY :
+                adventure.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.icon_adventurous));
+                break;
+            default:
+
+        }
     }
 }
