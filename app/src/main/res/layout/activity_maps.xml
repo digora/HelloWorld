@@ -92,28 +92,39 @@
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="View Adventures"
-            android:background="@null"
-            android:textSize="12sp"
-            android:textColor="@color/darkMetal"
-            android:id="@+id/btn_view_adventures"
-            android:padding="12dp"
-            android:layout_gravity="right"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Cancel Adventure"
+                android:background="@null"
+                android:textSize="12sp"
+                android:textColor="@color/darkMetal"
+                android:id="@+id/btn_cancel_adventure"
+                android:visibility="gone"
+                android:padding="12dp"
+                android:gravity="left"
+                android:layout_weight="1"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Cancel Adventure"
-            android:background="@null"
-            android:textSize="12sp"
-            android:textColor="@color/darkMetal"
-            android:id="@+id/btn_cancel_adventure"
-            android:visibility="gone"
-            android:padding="12dp"
-            android:layout_gravity="left"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="View Adventures"
+                android:background="@null"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:id="@+id/btn_view_adventures"
+                android:padding="12dp"
+                android:gravity="right"
+                android:layout_weight="1"/>
+
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
