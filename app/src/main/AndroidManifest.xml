@@ -57,7 +57,7 @@
         <activity
             android:name=".AdventureActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.ActionBar"/>
+            android:theme="@style/AppTheme.ActionBar" />
         <activity
             android:name=".AdventureDetailsActivity"
             android:screenOrientation="portrait" />
@@ -70,7 +70,10 @@
         <activity android:name=".NoNameActivity" />
         <activity
             android:name=".ViewRelAdvPopActivity"
-            android:theme="@style/AppTheme.PopUpTheme"/>
+            android:theme="@style/AppTheme.PopUpTheme" />
+        <activity
+            android:name=".MoreActivity"
+            android:theme="@style/AppTheme.ActionBar"/>
     </application>
 
 </manifest>

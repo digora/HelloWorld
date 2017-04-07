@@ -2,7 +2,6 @@ package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,11 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import hellow.mobapde.com.helloworld.Adapters.NearbyAdventureAdapter;
-import hellow.mobapde.com.helloworld.Adapters.CustomSwipeAdapter;
 import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
 import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
@@ -39,6 +38,10 @@ public class AdventureActivity extends AppCompatActivity {
 
     LinearLayout llCatalogContainer;
 
+    TextView tvMoreClosest;
+    TextView tvMoreLatest;
+    TextView tvMoreSimple;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,8 @@ public class AdventureActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         createContentView();
+
+        initListeners();
     }
 
     @Override
@@ -98,7 +103,48 @@ public class AdventureActivity extends AppCompatActivity {
 
         llCatalogContainer = (LinearLayout) findViewById(R.id.ll_catalog_container);
 
+        tvMoreClosest = (TextView) findViewById(R.id.tv_more_closest);
 
+        tvMoreLatest = (TextView) findViewById(R.id.tv_more_latest);
+
+        tvMoreSimple = (TextView) findViewById(R.id.tv_more_simple);
+
+
+    }
+
+    private void initListeners(){
+        tvMoreClosest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), MoreActivity.class);
+
+                i.putExtra("type", "Nearby Adventures");
+
+                startActivity(i);
+            }
+        });
+
+        tvMoreLatest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), MoreActivity.class);
+
+                i.putExtra("type", "Latest Adventures");
+
+                startActivity(i);
+            }
+        });
+
+        tvMoreSimple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), MoreActivity.class);
+
+                i.putExtra("type", "Simple Adventures");
+
+                startActivity(i);
+            }
+        });
     }
 
     public void initTopList(){

@@ -4,6 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hellow.mobapde.com.helloworld.Wrapper.MoreActivity">
+    android:orientation="vertical"
+    android:clipToPadding="true"
+    android:background="#FFF"
+    tools:context="hellow.mobapde.com.helloworld.MoreActivity">
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rv_more_adventures_list"
+        android:clipToPadding="true"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"/>
+
 
 </LinearLayout>
