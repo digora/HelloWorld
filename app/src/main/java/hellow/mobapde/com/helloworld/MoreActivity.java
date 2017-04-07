@@ -12,9 +12,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import hellow.mobapde.com.helloworld.Adapters.MoreAdventureAdapter;
-import hellow.mobapde.com.helloworld.Adapters.NearbyAdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
-import hellow.mobapde.com.helloworld.R;
 
 public class MoreActivity extends AppCompatActivity {
 
