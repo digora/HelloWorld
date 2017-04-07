@@ -18,14 +18,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import hellow.mobapde.com.helloworld.Adapters.NearbyAdventureAdapter;
-import hellow.mobapde.com.helloworld.Adapters.LatestAdventureAdapter;
-import hellow.mobapde.com.helloworld.Adapters.TopAdventureAdapter;
 import hellow.mobapde.com.helloworld.Beans.Adventure;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
@@ -36,17 +32,17 @@ public class AdventureActivity extends AppCompatActivity {
     /*Testes*/
     //ViewPager vpFeaturedList;
     //CustomSwipeAdapter customSwipeAdapter;
-    RecyclerView rvLatestList;
+    RecyclerView rvCasualList;
     RecyclerView rvTopList;
     RecyclerView rvClosestList;
 
     ArrayList<Adventure> latestAdventureList;
-    ArrayList<Adventure> topAdventureList;
+    ArrayList<Adventure> casualAdventureList;
     ArrayList<Adventure> closestAdventureList;
 
     NearbyAdventureAdapter closestAdventureAdapter;
-    LatestAdventureAdapter latestAdventureAdapter;
-    TopAdventureAdapter topAdventureAdapter;
+    NearbyAdventureAdapter latestAdventureAdapter;
+    NearbyAdventureAdapter casualAdventureAdapter;
 
     LinearLayout llCatalogContainer;
 
@@ -96,20 +92,20 @@ public class AdventureActivity extends AppCompatActivity {
         initDummyTopList();
         initDummyClosestList();
 
-        rvLatestList = (RecyclerView) findViewById(R.id.rv_latest_list);
-        rvLatestList.setLayoutManager(new LinearLayoutManager(
+        rvCasualList = (RecyclerView) findViewById(R.id.rv_latest_list);
+        rvCasualList.setLayoutManager(new LinearLayoutManager(
                 getBaseContext(),
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
 
 
-        rvTopList = (RecyclerView) findViewById(R.id.rv_top_list);
+        /*rvTopList = (RecyclerView) findViewById(R.id.rv_top_list);
         rvTopList.setLayoutManager(new LinearLayoutManager(
                 getBaseContext(),
                 LinearLayoutManager.HORIZONTAL,
                 false
-        ));
+        ));*/
 
 
         rvClosestList = (RecyclerView) findViewById(R.id.rv_closest_list);
@@ -118,13 +114,14 @@ public class AdventureActivity extends AppCompatActivity {
                 LinearLayoutManager.HORIZONTAL,
                 false
         ));
+        initCasualList();
         initClosestList();
 
         llCatalogContainer = (LinearLayout) findViewById(R.id.ll_catalog_container);
 
         tvMoreClosest = (TextView) findViewById(R.id.tv_more_closest);
 
-        tvMoreLatest = (TextView) findViewById(R.id.tv_more_latest);
+        //tvMoreLatest = (TextView) findViewById(R.id.tv_more_latest);
 
         tvMoreSimple = (TextView) findViewById(R.id.tv_more_simple);
 
@@ -143,7 +140,7 @@ public class AdventureActivity extends AppCompatActivity {
             }
         });
 
-        tvMoreLatest.setOnClickListener(new View.OnClickListener() {
+        /*tvMoreLatest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), MoreActivity.class);
@@ -152,7 +149,7 @@ public class AdventureActivity extends AppCompatActivity {
 
                 startActivity(i);
             }
-        });
+        });*/
 
         tvMoreSimple.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,9 +163,53 @@ public class AdventureActivity extends AppCompatActivity {
         });
     }
 
-    public void initTopList(){
+    public void initCasualList(){
+        casualAdventureAdapter = new NearbyAdventureAdapter(casualAdventureList);
+        casualAdventureAdapter.setOnAdventureClickListener(new NearbyAdventureAdapter.OnAdventureClickListener() {
+            @Override
+            public void onAdventureClick(View view, Adventure a) {
+                Intent adventurePageIntent = new Intent(getBaseContext(), AdventureDetailsActivity.class);
+                adventurePageIntent.putExtra(ADVENTURE_KEY, a.getKey());
 
+                startActivity(adventurePageIntent);
+            }
+        });
 
+        rvCasualList.setAdapter(casualAdventureAdapter);
+
+        DatabaseReference adventureReference = firebaseHelper.getAdventureReference();
+
+        adventureReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Adventure> adventures = new ArrayList<Adventure>();
+
+                for (DataSnapshot adventure: dataSnapshot.getChildren()) {
+                    Adventure retrievedAdventure = adventure.getValue(Adventure.class);
+                    Log.i("retrieved adventure", retrievedAdventure.getKey());
+
+                    initBitmapDifficulty(retrievedAdventure);
+
+                    adventures.add(retrievedAdventure);
+                }
+
+                for (int i = 0; i < adventures.size(); i++) {
+
+                    Adventure currentAdventure = adventures.get(i);
+
+                    if (currentAdventure.getDifficulty().equals(Adventure.CASUAL_DIFFICULTY)) {
+                        casualAdventureList.add(currentAdventure);
+                        casualAdventureAdapter.notifyItemInserted(casualAdventureList.size());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void initLatestList(){
@@ -296,31 +337,31 @@ public class AdventureActivity extends AppCompatActivity {
     }
 
     public void initDummyTopList(){
-        topAdventureList = new ArrayList<>();
-        topAdventureList.add(new Adventure("South Adventure",
+        casualAdventureList = new ArrayList<>();
+        /*casualAdventureList.add(new Adventure("South Adventure",
                 "Venture the south.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
-        topAdventureList.add(new Adventure("East Adventure",
+        casualAdventureList.add(new Adventure("East Adventure",
                 "Venture the east.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
-        topAdventureList.add(new Adventure("North Adventure",
+        casualAdventureList.add(new Adventure("North Adventure",
                 "Venture the north.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
-        topAdventureList.add(new Adventure("North Adventure",
+        casualAdventureList.add(new Adventure("North Adventure",
                 "Venture the north.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
-        topAdventureList.add(new Adventure("North Adventure",
+        casualAdventureList.add(new Adventure("North Adventure",
                 "Venture the north.",
                 "Incomplete",
                 BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
-        topAdventureList.add(new Adventure("North Adventure",
+        casualAdventureList.add(new Adventure("North Adventure",
                 "Venture the north.",
                 "Incomplete",
-                BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));
+                BitmapFactory.decodeResource(getResources(), R.drawable.app_icon)));*/
 
 
     }
