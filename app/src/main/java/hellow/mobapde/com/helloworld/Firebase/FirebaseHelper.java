@@ -145,7 +145,7 @@ public class FirebaseHelper {
     }
 
     public void updateProfilesVisitedStops(final String profileKey, String stopKey){
-        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).child(stopKey).setValue(true);
+        firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY).child(stopKey).setValue("true");
     }
 
     public DatabaseReference getVisitedStopsReference(final String profileKey) {
