@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.jar.*;
 
+import hellow.mobapde.com.helloworld.Beans.Stamp;
 import hellow.mobapde.com.helloworld.Beans.Stop;
 import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
@@ -44,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
         stop.setLongitude("120.99248863756655");
 
         firebaseHelper.createStop(stop);*/
+
+        /*Stamp stamp = new Stamp();
+
+        stamp.setName("First Adventure");
+
+        firebaseHelper.createStamp(stamp);*/
 
         btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
