@@ -72,6 +72,7 @@ import hellow.mobapde.com.helloworld.GoogleMapParser.DataParser;
 import hellow.mobapde.com.helloworld.Settings.CircleSettings;
 import hellow.mobapde.com.helloworld.Settings.MarkerSettings;
 import hellow.mobapde.com.helloworld.Settings.PathSettings;
+import hellow.mobapde.com.helloworld.StampChecker.StampManager;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapper;
 import hellow.mobapde.com.helloworld.Wrapper.PathWrapperList;
 import hellow.mobapde.com.helloworld.Wrapper.StopWrapper;
@@ -113,6 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
 
     private FirebaseHelper firebaseHelper;
+    private StampManager stampManager;
 
     LinearLayout llAdvStatusContainer;
     LinearLayout llMarkerClickedContainer;
@@ -135,6 +137,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         completedStops = new ArrayList<>();
 
         firebaseHelper = new FirebaseHelper();
+
+        stampManager = new StampManager();
 
         stopWrappers = new StopWrapperList();
         pathWrappers = new PathWrapperList();
@@ -774,8 +778,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String userKey = sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
                 firebaseHelper.updateProfilesVisitedStops(userKey, nearbyStopWrapper.getStop().getKey());
 
+                stampManager.checkEligibleForFirstStop(userKey);
+
                 if (completedStops.size() == currentAdventure.getNumberOfStops()) {
                     firebaseHelper.updateProfilesAdventure(userKey);
+
+                    stampManager.checkEligibleForFirstAdventure(userKey);
 
                     mMap.clear();
 

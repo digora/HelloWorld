@@ -1,7 +1,9 @@
 package hellow.mobapde.com.helloworld;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,10 +15,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import hellow.mobapde.com.helloworld.Adapters.StampAdapter;
+import hellow.mobapde.com.helloworld.Beans.Adventure;
+import hellow.mobapde.com.helloworld.Beans.Profile;
 import hellow.mobapde.com.helloworld.Beans.Stamp;
+import hellow.mobapde.com.helloworld.Firebase.FirebaseHelper;
 
 public class StampPopActivity extends AppCompatActivity {
 
@@ -27,10 +38,19 @@ public class StampPopActivity extends AppCompatActivity {
     StampAdapter stampAdapter;
     TextView tvStampPopBack;
 
+    String userKey;
+
+    FirebaseHelper firebaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stamp_pop);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        userKey =  sharedPreferences.getString(NoNameActivity.USER_KEY, "null");
+
+        firebaseHelper = new FirebaseHelper();
 
         createContentView();
 
@@ -71,7 +91,7 @@ public class StampPopActivity extends AppCompatActivity {
     public void initDummyStampData(){
 
         stampList = new ArrayList<>();
-        stampList.add(new Stamp("Casual Adventurer",
+        /*stampList.add(new Stamp("Casual Adventurer",
                 "Completed a casual adventure.",
                 "01/01/17",
                 BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
@@ -98,7 +118,48 @@ public class StampPopActivity extends AppCompatActivity {
         stampList.add(new Stamp("Quick Adventurer",
                 "Completed a casual adventure in less than 1 hour.",
                 "01/01/17",
-                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));
+                BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp)));*/
+
+        DatabaseReference profileReference = firebaseHelper.getProfileReference(userKey);
+
+        profileReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Profile profile = dataSnapshot.getValue(Profile.class);
+
+                if(profile.getStamps() != null) {
+                    Object[] objects = profile.getStamps().keySet().toArray();
+
+                    String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
+
+                    for (String key : keys) {
+                        DatabaseReference stampReference = firebaseHelper.getStampReference(key);
+
+                        stampReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Stamp stamp = dataSnapshot.getValue(Stamp.class);
+
+                                stamp.setPicture(BitmapFactory.decodeResource(getResources(), R.drawable.red_stamp));
+
+                                stampList.add(stamp);
+                                stampAdapter.notifyItemInserted(stampList.size());
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
     }

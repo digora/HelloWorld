@@ -56,6 +56,10 @@ public class FirebaseHelper {
         return firebaseReference.child(ST_PATH);
     }
 
+    public DatabaseReference getStampReference(String key){
+        return firebaseReference.child(ST_PATH).child(key);
+    }
+
     public DatabaseReference getAdventureReference() {
         return firebaseReference.child(AD_PATH);
     }
@@ -151,4 +155,10 @@ public class FirebaseHelper {
     public DatabaseReference getVisitedStopsReference(final String profileKey) {
         return firebaseReference.child(PRO_PATH).child(profileKey).child(VISITED_STOPS_KEY);
     }
+
+    public void updateUserStamps(String profileKey, String stampKey){
+        DatabaseReference profileReference = firebaseReference.child(PRO_PATH).child(profileKey).child(ST_PATH).child(stampKey);
+        profileReference.setValue("true");
+    }
+
 }
