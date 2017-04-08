@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/et_adv_name"
             android:textColor="#FFF"
-            android:hint="Name"/>
+            android:maxLines="1"
+            android:hint="Your Name"/>
 
         <Button
             android:layout_width="wrap_content"
