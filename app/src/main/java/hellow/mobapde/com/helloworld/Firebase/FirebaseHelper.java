@@ -56,6 +56,10 @@ public class FirebaseHelper {
         return firebaseReference.child(ST_PATH);
     }
 
+    public DatabaseReference getStampReference(String key){
+        return firebaseReference.child(ST_PATH).child(key);
+    }
+
     public DatabaseReference getAdventureReference() {
         return firebaseReference.child(AD_PATH);
     }

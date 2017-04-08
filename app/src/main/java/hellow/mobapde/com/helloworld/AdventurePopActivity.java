@@ -122,29 +122,31 @@ public class AdventurePopActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Profile profile = dataSnapshot.getValue(Profile.class);
 
-                Object[] objects = profile.getAdventureLog().keySet().toArray();
+                if (profile.getAdventureLog() != null) {
+                    Object[] objects = profile.getAdventureLog().keySet().toArray();
 
-                String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
+                    String[] keys = Arrays.copyOf(objects, objects.length, String[].class);
 
-                for (String key : keys) {
-                    DatabaseReference adventureReference = firebaseHelper.getAdventureReference(key);
+                    for (String key : keys) {
+                        DatabaseReference adventureReference = firebaseHelper.getAdventureReference(key);
 
-                    adventureReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Adventure adventure = dataSnapshot.getValue(Adventure.class);
+                        adventureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Adventure adventure = dataSnapshot.getValue(Adventure.class);
 
-                            initBitmapDifficulty(adventure);
+                                initBitmapDifficulty(adventure);
 
-                            adventureList.add(adventure);
-                            adventureAdapter.notifyItemInserted(adventureList.size());
-                        }
+                                adventureList.add(adventure);
+                                adventureAdapter.notifyItemInserted(adventureList.size());
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             }
 
