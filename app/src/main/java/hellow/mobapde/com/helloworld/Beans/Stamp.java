@@ -11,12 +11,31 @@ public class Stamp {
     private String description;
     private Bitmap picture;
     private String date;
+    private String key;
 
     public Stamp(String name, String description, String date, Bitmap picture) {
         this.name = name;
         this.description = description;
         this.date = date;
         this.picture = picture;
+    }
+
+    public Stamp(String name, String description, String date){
+        this.name = name;
+        this.description = description;
+        this.date = date;
+    }
+
+    public Stamp(){
+
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Bitmap getPicture() {

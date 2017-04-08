@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF"
+    android:padding="16dp"
+    tools:context="hellow.mobapde.com.helloworld.ViewRelAdvPopActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Related Adventures"
+        android:textSize="24dp"
+        android:layout_weight="5"
+        android:layout_gravity="center"
+        android:textColor="@color/profileFontColor"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/rv_rel_adv_list"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/darkMetal"
+            android:textColor="@color/fontColor"
+            android:fontFamily="sans-serif"
+            android:text="CANCEL"
+            android:id="@+id/btn_rel_adv_cancel"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="FINISH"
+            android:layout_marginLeft="6dp"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/fontColor"
+            android:fontFamily="sans-serif"
+            android:id="@+id/btn_rel_adv_going"/>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

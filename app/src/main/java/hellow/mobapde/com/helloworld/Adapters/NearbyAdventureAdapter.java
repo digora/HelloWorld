@@ -17,14 +17,14 @@ import hellow.mobapde.com.helloworld.R;
  * Created by Mine V3 on 13/03/2017.
  */
 
-public class ClosestAdventureAdapter extends RecyclerView.Adapter<ClosestAdventureAdapter.ClosestAdventureHolder>{
+public class NearbyAdventureAdapter extends RecyclerView.Adapter<NearbyAdventureAdapter.ClosestAdventureHolder>{
 
     ArrayList<Adventure> closestAdventureList;
 
     OnAdventureClickListener onAdventureClickListener;
 
 
-    public ClosestAdventureAdapter(ArrayList<Adventure> closestAdventureList){
+    public NearbyAdventureAdapter(ArrayList<Adventure> closestAdventureList){
         this.closestAdventureList = closestAdventureList;
     }
 

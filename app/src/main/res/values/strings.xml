@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Hello World</string>
     <string name="title_activity_maps">Map</string>
+    <string name="ph_user_name">...</string>
+    <string name="lorem_ipsum">Nulla facilisi. Curabitur tempor eros ut ante tincidunt, ac posuere nulla porttitor. Donec vel eros non dolor interdum ullamcorper sit amet ut odio. Aliquam mattis velit eget massa condimentum venenatis. Mauris eu sapien sagittis, porta ante quis, dapibus ipsum. Mauris venenatis nisl luctus dapibus venenatis. Nam a diam dolor. In sollicitudin aliquam faucibus. Vivamus interdum, ante id placerat dapibus, nunc turpis iaculis diam, ac lobortis diam ligula quis sapien. Maecenas faucibus viverra imperdiet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sit amet risus sollicitudin, eleifend sapien vitae, luctus dui. Fusce imperdiet vel dui eu efficitur. Aliquam consequat sagittis ullamcorper. Integer ac nunc fringilla, sagittis leo at, pellentesque elit. Pellentesque laoreet vehicula vestibulum. Nulla ornare, quam quis ullamcorper vulputate, tortor nisl aliquet ligula, in faucibus lectus massa et arcu. In fermentum, nulla ac iaculis ullamcorper, est justo euismod risus, eu finibus mi tortor eget turpis. Cras id nisl sollicitudin, vestibulum lectus eu, scelerisque augue. Nullam mattis tincidunt ligula, at congue eros bibendum a. Proin eu augue a eros interdum dapibus ac in sem.</string>
+    <string name="view_related">View adventures with this stop</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

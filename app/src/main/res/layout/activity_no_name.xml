@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context="hellow.mobapde.com.helloworld.NoNameActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:id="@+id/ll_name_prompt_container"
+        tools:context="hellow.mobapde.com.helloworld.LoginActivity"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_name_prompt"
+            android:textAlignment="center"
+            android:textSize="40dp"
+            android:text="Whats your name adventurer?"
+            android:textColor="#FFF"/>
+
+        <EditText
+            android:layout_width="250dp"
+            android:textSize="32dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_adv_name"
+            android:textColor="#FFF"
+            android:hint="Name"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_finish"
+            android:background="@null"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/fontColor"
+            android:text="Finish"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

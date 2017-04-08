@@ -1,34 +1,71 @@
 package hellow.mobapde.com.helloworld.Beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Patrick on 3/3/2017.
  */
 
 public class Profile {
-    private int uid;
+
+    private String key;
     private String name;
-    private ArrayList<Adventure> completed_adventures;
-    private ArrayList<Stamp> stamps;
     private String gender;
+    private String currAdKey;
+    private Map<String, String> adventureLog;
+    private Map<String, String> visitedStops;
+    private Map<String, String> stamps;
+
 
     public Profile() {
     }
 
-    public Profile(String name, ArrayList<Adventure> completed_adventures, ArrayList<Stamp> stamps, String gender) {
+    public Profile(String name, Map<String, String> stamps, String gender) {
         this.name = name;
-        this.completed_adventures = completed_adventures;
         this.stamps = stamps;
         this.gender = gender;
     }
 
-    public int getUid() {
-        return uid;
+    public Profile(String name, String gender, Map<String, String> adventureLog) {
+        this.name = name;
+        this.gender = gender;
+        this.adventureLog = adventureLog;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Map<String, String> getVisitedStops() {
+        return visitedStops;
+    }
+
+    public void setVisitedStops(Map<String, String> visitedStops) {
+        this.visitedStops = visitedStops;
+    }
+
+    public Map<String, String> getAdventureLog() {
+        return adventureLog;
+    }
+
+    public void setAdventureLog(Map<String, String> adventureLog) {
+        this.adventureLog = adventureLog;
+    }
+
+    public String getCurrAdKey() {
+        return currAdKey;
+    }
+
+    public void setCurrAdKey(String currAdKey) {
+        this.currAdKey = currAdKey;
     }
 
     public String getName() {
@@ -39,19 +76,11 @@ public class Profile {
         this.name = name;
     }
 
-    public ArrayList<Adventure> getCompleted_adventures() {
-        return completed_adventures;
-    }
-
-    public void setCompleted_adventures(ArrayList<Adventure> completed_adventures) {
-        this.completed_adventures = completed_adventures;
-    }
-
-    public ArrayList<Stamp> getStamps() {
+    public Map<String, String> getStamps() {
         return stamps;
     }
 
-    public void setStamps(ArrayList<Stamp> stamps) {
+    public void setStamps(Map<String, String> stamps) {
         this.stamps = stamps;
     }
 

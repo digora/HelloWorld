@@ -1,5 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,14 +18,57 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="gone"
+        android:clipToPadding="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/ll_marker_clicked_container"
+        android:background="#FFF">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Select an adventure with this stop"
+            android:background="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:textColor="@color/fontColor"
+            android:id="@+id/btn_view_rel_adventures"
+            android:padding="12dp"
+            android:elevation="6dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="12dp"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_maps_going"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginBottom="6dp"
+            android:background="@color/darkMetal"
+            android:textColor="@color/fontColor"
+            android:text="GO!" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/ll_adv_status_container"
+        android:visibility="visible"
         android:background="#FFF"
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,6 +77,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_adventure_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -44,20 +89,43 @@
                 android:id="@+id/tv_current_adventure_title"
                 android:textColor="#000"
                 android:textSize="24sp"
-                android:text="No Current Adventure"/>
+                android:text="Retrieving Current Adventure..."/>
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="View Adventures"
-            android:background="@null"
-            android:textSize="12sp"
-            android:textColor="#808080"
-            android:id="@+id/btn_view_adventures"
-            android:padding="12dp"
-            android:layout_gravity="right"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Cancel Adventure"
+                android:background="@null"
+                android:textSize="12sp"
+                android:textColor="@color/darkMetal"
+                android:id="@+id/btn_cancel_adventure"
+                android:visibility="gone"
+                android:padding="12dp"
+                android:gravity="left"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="View Adventures"
+                android:background="@null"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:id="@+id/btn_view_adventures"
+                android:padding="12dp"
+                android:gravity="right"
+                android:layout_weight="1"/>
+
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
@@ -65,10 +133,12 @@
         android:id="@+id/btn_dashboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/gx_dash_icon"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/gx_dash_icon"
+        app:backgroundTint="@color/colorPrimaryDark" />
 
 </RelativeLayout>

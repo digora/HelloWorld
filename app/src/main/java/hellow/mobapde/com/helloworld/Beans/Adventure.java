@@ -1,23 +1,37 @@
 package hellow.mobapde.com.helloworld.Beans;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Patrick on 3/3/2017.
  */
 
 public class Adventure {
+
+    public static final String CASUAL_DIFFICULTY = "casual";
+    public static final String INTERMEDIATE_DIFFICULTY = "intermediate";
+    public static final String ADVENTUROUS_DIFFICULTY = "adventurous";
+
     private String name;
     private String details;
+    private String date;
+    private int timesStarted;
+    private String difficulty;
+    @JsonIgnore
     private String status;
+    @JsonIgnore
+    private String key;
+    @JsonIgnore
     private Bitmap picture;
-    private ArrayList<Stop> stops;
+    @JsonIgnore
+    private Map<String, Stop> stops;
 
 
     /* Uncomment this out. */
@@ -30,8 +44,16 @@ public class Adventure {
 
     /* For temporary data */
 
-    public Adventure () {
-        stops = new ArrayList<Stop>();
+    public Adventure() {
+        this.status = "Not Started";
+
+        stops = new LinkedHashMap<>();
+    }
+
+    public Adventure(String name, String details,String date,String difficulty) {
+        this.name = name;
+        this.details = details;
+        this.date = date;
     }
 
     public Adventure(String name, String details, String status, Bitmap picture) {
@@ -39,6 +61,46 @@ public class Adventure {
         this.details = details;
         this.status = status;
         this.picture = picture;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getTimesStarted() {
+        return timesStarted;
+    }
+
+    public void setTimesStarted(int timesStarted) {
+        this.timesStarted = timesStarted;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Map<String, Stop> getStops() {
+        return stops;
+    }
+
+    public void setStops(Map<String, Stop> stops) {
+        this.stops = stops;
     }
 
     public Bitmap getPicture() {
@@ -73,27 +135,19 @@ public class Adventure {
         this.status = status;
     }
 
-    public ArrayList<Stop> getStops() {
-        return stops;
-    }
-
-    public void setStops(ArrayList<Stop> stops) {
-        this.stops = stops;
-    }
-
-    public void addStop (Stop stop) {
-        stops.add(stop);
-    }
-
-    public Stop getStop (int index) {
-        return stops.get(index);
+    public Stop getStop (String key) {
+        return stops.get(key);
     }
 
     public int getNumberOfStops () {
         return stops.size();
     }
 
-    public LatLng getLatLngOfStop (int index) {
-        return stops.get(index).getLatLng();
+    public void addStop (String key, Stop stop) {
+        stops.put(key, stop);
+    }
+
+    public LatLng getLatLngOfStop (String key) {
+        return stops.get(key).getLatLng();
     }
 }

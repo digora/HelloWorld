@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class AdventureAdapter extends RecyclerView.Adapter<AdventureAdapter.Adve
     private static String TAG = "AdventureAdapter";
 
     ArrayList<Adventure> adventureList;
+
+    AdventureAdapter.OnAdventureClickListener onAdventureClickListener;
 
     public AdventureAdapter(ArrayList<Adventure> adventureList){
         this.adventureList = adventureList;
@@ -58,6 +61,14 @@ public class AdventureAdapter extends RecyclerView.Adapter<AdventureAdapter.Adve
         holder.tvAdventureTitle.setText(adventure.getName());
         holder.ivAdventureImagePreview.setImageBitmap(adventure.getPicture());
 
+        holder.llAdventurePopContainer.setTag(adventure);
+        holder.llAdventurePopContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAdventureClickListener.onAdventureClick(v, (Adventure) v.getTag());
+            }
+        });
+
         Log.d(TAG, "ADAPTER - Adventure title is: " + holder.tvAdventureTitle.getText().toString());
 
         if(holder.ivAdventureImagePreview == null){
@@ -77,12 +88,30 @@ public class AdventureAdapter extends RecyclerView.Adapter<AdventureAdapter.Adve
         TextView tvAdventureTitle;
         ImageView ivAdventureImagePreview;
 
+        LinearLayout llAdventurePopContainer;
+
         public AdventureHolder(View itemView) {
             super(itemView);
             tvAdventureTitle = (TextView) itemView.findViewById(R.id.tv_adventure_title);
+
+            llAdventurePopContainer = (LinearLayout) itemView.findViewById(R.id.ll_adventure_pop_container);
+
             ivAdventureImagePreview = (ImageView) itemView.findViewById(R.id.iv_adventure_image_preview);
 
         }
     }
+
+    public interface OnAdventureClickListener{
+        public void onAdventureClick(View view, Adventure a);
+    }
+
+    public AdventureAdapter.OnAdventureClickListener getOnAdventureClickListener()    {
+        return onAdventureClickListener;
+    }
+
+    public void setOnAdventureClickListener(AdventureAdapter.OnAdventureClickListener onAdventureClickListener) {
+        this.onAdventureClickListener = onAdventureClickListener;
+    }
+
 
 }

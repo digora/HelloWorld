@@ -42,7 +42,8 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,13 +51,35 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileActivity"
-            android:theme="@style/AppTheme.ActionBar"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AdventureActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AdventureDetailsActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AdventureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ActionBar" />
+        <activity
+            android:name=".AdventureDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AdventurePopActivity"
+            android:theme="@style/AppTheme.PopUpTheme" />
+        <activity
+            android:name=".StampPopActivity"
+            android:theme="@style/AppTheme.PopUpTheme" />
+        <activity android:name=".NoNameActivity" />
+        <activity
+            android:name=".ViewRelAdvPopActivity"
+            android:theme="@style/AppTheme.PopUpTheme" />
+        <activity
+            android:name=".MoreActivity"
+            android:theme="@style/AppTheme.ActionBar" />
+        <activity
+            android:name=".ViewStampPopActivity"
+            android:theme="@style/AppTheme.ViewPopUpTheme"/>
+        <activity
+            android:name=".ViewAdventurePopActivity"
+            android:theme="@style/AppTheme.ViewPopUpTheme"/>
     </application>
 
 </manifest>
